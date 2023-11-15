@@ -8,7 +8,7 @@ export const useCatalog = defineStore("catalog", {
   }),
   actions: {
     async fetchCategories() {
-      const res = await axiosInstance.get("/wp-json/wc/v3/products/categories");
+      const res = await axiosInstance.get("/products/categories");
       console.log(res);
     },
   },
