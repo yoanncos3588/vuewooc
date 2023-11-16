@@ -3,7 +3,7 @@ import { axiosInstance } from "../utils/axios";
 import { ProductCategorie } from "../types/categories";
 import { camelCase } from "change-case/keys";
 import { Product } from "../types/products";
-import { HttpParams } from "../types/apiParams";
+import { UrlParams } from "../types/apiParams";
 
 export interface catalogState {
   categoriesIds: number[]; //use for easy use of maps and filter (keep up to date!)
@@ -38,9 +38,9 @@ export const useCatalog = defineStore("catalog", {
 
     /**
      * Fetch products from api, with possibles filters
-     * @param params @type {HttpParams} : obj listing all parameters use to construct url parameters for filtering
+     * @param params @type {UrlParams} : obj listing all parameters use to construct url parameters for filtering
      */
-    async fetchProducts(params?: HttpParams) {
+    async fetchProducts(params?: UrlParams) {
       const { data: dataProducts }: { data: Product[] } = await axiosInstance.get("/products", {
         params: params,
       });
