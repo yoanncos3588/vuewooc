@@ -3,6 +3,7 @@ import { axiosInstance } from "../utils/axios";
 import { ProductCategorie } from "../types/categories";
 import { camelCase } from "change-case/keys";
 import { Product } from "../types/products";
+import { HttpParams } from "../types/apiParams";
 
 export interface catalogState {
   categoriesIds: number[]; //use for easy use of maps and filter (keep up to date!)
@@ -35,14 +36,23 @@ export const useCatalog = defineStore("catalog", {
       this.categories = categoriesMap;
     },
 
-    async fetchProducts() {
-      const { data: dataProducts }: { data: Product[] } = await axiosInstance.get("/products");
+    /**
+     * Fetch products from api, with possibles filters
+     * @param params @type {HttpParams} : obj listing all parameters use to construct url parameters for filtering
+     */
+    async fetchProducts(params?: HttpParams) {
+      const { data: dataProducts }: { data: Product[] } = await axiosInstance.get("/products", {
+        params: params,
+      });
 
       let productsId: number[] = [];
       let productsMap = new Map<number, Product>();
 
       for (const product of dataProducts) {
-        productsId.push(product.id);
+        if (!this.productsIds.includes(product.id)) {
+          // important : product wasn't fetch before and wasn't in id's array
+          this.productsIds.push(product.id);
+        }
         productsMap.set(product.id, camelCase(product) as Product);
       }
 
@@ -57,19 +67,6 @@ export const useCatalog = defineStore("catalog", {
         this.productsIds.push(productId);
       }
       this.products.set(dataProduct.id, camelCase(dataProduct) as Product);
-    },
-
-    async fetchProductsByCategory(categoryId: number) {
-      const { data: dataProducts }: { data: Product[] } = await axiosInstance.get(`/products`, {
-        params: { categories: categoryId },
-      });
-      for (const product of dataProducts) {
-        if (!this.productsIds.includes(product.id)) {
-          // important : product wasn't fetch before and wasn't in id's array
-          this.productsIds.push(product.id);
-        }
-        this.products.set(product.id, camelCase(product) as Product);
-      }
     },
   },
 });

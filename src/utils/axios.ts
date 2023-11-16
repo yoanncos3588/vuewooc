@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosRequestHeaders } from "axios";
 import { oauth } from "../utils/oauth";
 
 export const axiosInstance = axios.create({
@@ -11,8 +11,12 @@ axiosInstance.interceptors.request.use(
     if (config.method === undefined) {
       throw Error("Missing method type for request to API");
     }
-    // add oauth to any existing params
-    config.params = { ...oauth.authorize({ url: `${config.baseURL}${config.url}`, method: config.method, ...config.params }) };
+
+    const queryParameters = new URLSearchParams(config.params).toString();
+    const completeUrl = `${config.baseURL}${config.url}${queryParameters ? "?" + queryParameters : ""}`;
+
+    config.headers = oauth.toHeader(oauth.authorize({ url: completeUrl, method: config.method })) as AxiosRequestHeaders;
+
     return config;
   },
   (error) => {
