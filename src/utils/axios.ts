@@ -17,6 +17,11 @@ axiosInstance.interceptors.request.use(
 
     config.headers = oauth.toHeader(oauth.authorize({ url: completeUrl, method: config.method })) as AxiosRequestHeaders;
 
+    if (localStorage.getItem("token")) {
+      console.log("axiosinstance with token");
+      config.headers.Authorization = `Bearer ${localStorage.getItem("token")}`;
+    }
+
     return config;
   },
   (error) => {
@@ -24,11 +29,11 @@ axiosInstance.interceptors.request.use(
   }
 );
 
-axiosInstance.interceptors.response.use(
-  (config) => config,
-  (error) => {
-    console.log(error.response.data);
-    console.log(error.response.status);
-    console.log(error.response.headers);
-  }
-);
+// axiosInstance.interceptors.response.use(
+//   (config) => config,
+//   (error) => {
+//     console.log(error.response.data);
+//     console.log(error.response.status);
+//     console.log(error.response.headers);
+//   }
+// );

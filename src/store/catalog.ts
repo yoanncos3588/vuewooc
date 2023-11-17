@@ -22,7 +22,7 @@ export const useCatalog = defineStore("catalog", {
 
   actions: {
     async fetchCategories() {
-      const { data: dataCategories }: { data: ProductCategorie[] } = await axiosInstance.get("/products/categories");
+      const { data: dataCategories }: { data: ProductCategorie[] } = await axiosInstance.get("/wc/v3/products/categories");
 
       let categoriesId: number[] = [];
       let categoriesMap = new Map<number, ProductCategorie>();
@@ -41,7 +41,7 @@ export const useCatalog = defineStore("catalog", {
      * @param params @type {UrlParams} : obj listing all parameters use to construct url parameters for filtering
      */
     async fetchProducts(params?: UrlParams) {
-      const { data: dataProducts }: { data: Product[] } = await axiosInstance.get("/products", {
+      const { data: dataProducts }: { data: Product[] } = await axiosInstance.get("/wc/v3/products", {
         params: params,
       });
 
@@ -61,7 +61,7 @@ export const useCatalog = defineStore("catalog", {
     },
 
     async fetchProductById(productId: number) {
-      const { data: dataProduct }: { data: Product } = await axiosInstance.get(`/products/${productId}`);
+      const { data: dataProduct }: { data: Product } = await axiosInstance.get(`/wc/v3/products/${productId}`);
       if (!this.productsIds.includes(dataProduct.id)) {
         // important : product wasn't fetch before and wasn't in id's array
         this.productsIds.push(productId);
