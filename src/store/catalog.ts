@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { axiosInstance } from "../utils/axios";
+import { axiosInstanceWoo } from "../utils/axios";
 import { ProductCategorie } from "../types/categories";
 import { camelCase } from "change-case/keys";
 import { Product } from "../types/products";
@@ -22,7 +22,7 @@ export const useCatalog = defineStore("catalog", {
 
   actions: {
     async fetchCategories() {
-      const { data: dataCategories }: { data: ProductCategorie[] } = await axiosInstance.get("/wc/v3/products/categories");
+      const { data: dataCategories }: { data: ProductCategorie[] } = await axiosInstanceWoo.get("/products/categories");
 
       let categoriesId: number[] = [];
       let categoriesMap = new Map<number, ProductCategorie>();
@@ -41,7 +41,7 @@ export const useCatalog = defineStore("catalog", {
      * @param params @type {UrlParams} : obj listing all parameters use to construct url parameters for filtering
      */
     async fetchProducts(params?: UrlParams) {
-      const { data: dataProducts }: { data: Product[] } = await axiosInstance.get("/wc/v3/products", {
+      const { data: dataProducts }: { data: Product[] } = await axiosInstanceWoo.get("/products", {
         params: params,
       });
 
@@ -61,7 +61,7 @@ export const useCatalog = defineStore("catalog", {
     },
 
     async fetchProductById(productId: number) {
-      const { data: dataProduct }: { data: Product } = await axiosInstance.get(`/wc/v3/products/${productId}`);
+      const { data: dataProduct }: { data: Product } = await axiosInstanceWoo.get(`/products/${productId}`);
       if (!this.productsIds.includes(dataProduct.id)) {
         // important : product wasn't fetch before and wasn't in id's array
         this.productsIds.push(productId);

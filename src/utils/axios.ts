@@ -1,12 +1,12 @@
 import axios, { AxiosRequestHeaders } from "axios";
 import { oauth } from "../utils/oauth";
 
-export const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+export const axiosInstanceWoo = axios.create({
+  baseURL: import.meta.env.VITE_API_URL_WOO,
 });
 
-/** Add credentials for axios request to WC rest API and handling errors */
-axiosInstance.interceptors.request.use(
+/** WOOCOMMERCE INSTANCE - Add credentials for axios request to WC rest API and handling errors */
+axiosInstanceWoo.interceptors.request.use(
   (config) => {
     if (config.method === undefined) {
       throw Error("Missing method type for request to API");
@@ -17,11 +17,6 @@ axiosInstance.interceptors.request.use(
 
     config.headers = oauth.toHeader(oauth.authorize({ url: completeUrl, method: config.method })) as AxiosRequestHeaders;
 
-    if (localStorage.getItem("token")) {
-      console.log("axiosinstance with token");
-      config.headers.Authorization = `Bearer ${localStorage.getItem("token")}`;
-    }
-
     return config;
   },
   (error) => {
@@ -29,11 +24,14 @@ axiosInstance.interceptors.request.use(
   }
 );
 
-// axiosInstance.interceptors.response.use(
-//   (config) => config,
-//   (error) => {
-//     console.log(error.response.data);
-//     console.log(error.response.status);
-//     console.log(error.response.headers);
-//   }
-// );
+export const axiosInstanceWp = axios.create({
+  baseURL: import.meta.env.VITE_API_URL,
+});
+
+/** WP INSTANCE WITH BEARER */
+axiosInstanceWp.interceptors.request.use((config) => {
+  if (localStorage.getItem("token")) {
+    config.headers.Authorization = `Bearer ${localStorage.getItem("token")}`;
+  }
+  return config;
+});

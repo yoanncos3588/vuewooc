@@ -17,20 +17,21 @@ const credentials: Credentials = reactive({
 });
 const message = ref("");
 const level = ref<AlertLevels>("danger");
-const isFormValid = computed(() => credentials.email === "" || credentials.password === "");
+const isFormValid = computed(() => credentials.email !== "" || credentials.password !== "");
 
 /**
  * send login
  */
 async function handleSubmit() {
+  message.value = "";
   if (!isFormValid) {
     return;
   }
   message.value = await userStore.login(credentials.email, credentials.password);
 
   if (!message.value) {
-    message.value = "Connexion réussie, vous allez être redirigé";
     level.value = "success";
+    message.value = "Connexion réussie, vous allez être redirigé";
   }
 }
 </script>
@@ -46,6 +47,6 @@ async function handleSubmit() {
       <input type="password" name="" id="password" class="form-control" v-model="credentials.password" />
     </div>
     <Alert :message="message" :level="level" v-if="message" />
-    <button type="submit" class="btn btn-primary" :disabled="isFormValid">Se connecter</button>
+    <button type="submit" class="btn btn-primary" :disabled="!isFormValid">Se connecter</button>
   </form>
 </template>
