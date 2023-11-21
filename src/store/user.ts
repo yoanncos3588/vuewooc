@@ -1,8 +1,8 @@
 import { defineStore } from "pinia";
-import { axiosInstanceWp } from "../utils/axios";
+import { axiosInstanceWoo, axiosInstanceWp } from "../utils/axios";
 import { AxiosError } from "axios";
 import { stripHTMLFromString } from "../utils/formatText";
-import { User } from "../types/user";
+import { Customer, User } from "../types/user";
 
 export interface userState {
   userData: User | null;
@@ -14,6 +14,14 @@ export const useUser = defineStore("user", {
   }),
 
   actions: {
+    async createCustomer(customer: Customer) {
+      try {
+        const res = await axiosInstanceWoo.post("/customers");
+        if (res.status !== 200) {
+          throw Error();
+        }
+      } catch (error) {}
+    },
     async login(username: string, password: string): Promise<string> {
       try {
         const res = await axiosInstanceWp.post("/jwt-auth/v1/token/", { username, password });
@@ -48,6 +56,11 @@ export const useUser = defineStore("user", {
       } catch (error) {
         console.log(error);
       }
+    },
+    async logout() {
+      this.userData = null;
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
     },
   },
   getters: {

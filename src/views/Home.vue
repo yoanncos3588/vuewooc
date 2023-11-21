@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useCatalog } from "../store/catalog";
-import Login from "../components/Login.vue";
+import SigninForm from "../components/SigninForm.vue";
+import TestForm from "../components/TestForm.vue";
 
 const catalogStore = useCatalog();
 
@@ -10,5 +11,6 @@ const res1 = catalogStore.fetchProducts();
 </script>
 
 <template>
-  <Login />
+  <SigninForm />
+  <!-- <TestForm /> -->
 </template>
