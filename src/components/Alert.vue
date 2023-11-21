@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { AlertLevels } from "../types/alert";
 
-const props = defineProps<{
+defineProps<{
   message: string;
   level?: AlertLevels;
 }>();

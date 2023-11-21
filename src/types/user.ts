@@ -1,34 +1,14 @@
+import { BillingInfos, ShippingInfos } from "./billingShipping";
+
 export interface User {
   id: number;
   username: string;
 }
 
-export interface Customer extends User {
+export interface Customer extends Omit<User, "id"> {
   email: string;
-  first_name: string;
-  last_name: string;
-  billing: {
-    first_name: string;
-    last_name: string;
-    company: string;
-    address_1: string;
-    address_2: string;
-    city: string;
-    state: string;
-    postcode: string;
-    country: string;
-    email: string;
-    phone: string;
-  };
-  shipping: {
-    first_name: string;
-    last_name: string;
-    company: string;
-    address_1: string;
-    address_2: string;
-    city: string;
-    state: string;
-    postcode: string;
-    country: string;
-  };
+  firstName: string;
+  lastName: string;
+  billing: BillingInfos;
+  shipping: ShippingInfos;
 }

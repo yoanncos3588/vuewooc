@@ -2,6 +2,7 @@
 import { useCatalog } from "../store/catalog";
 import SigninForm from "../components/SigninForm.vue";
 import TestForm from "../components/TestForm.vue";
+import SignupForm from "../components/SignupForm.vue";
 
 const catalogStore = useCatalog();
 
@@ -11,6 +12,7 @@ const res1 = catalogStore.fetchProducts();
 </script>
 
 <template>
-  <SigninForm />
+  <!-- <SigninForm /> -->
+  <SignupForm />
   <!-- <TestForm /> -->
 </template>
