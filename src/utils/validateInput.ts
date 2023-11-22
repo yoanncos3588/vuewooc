@@ -33,14 +33,6 @@ export function minMaxLength({ min, max }: { min: number; max: number }): Rule {
   };
 }
 
-// export function minMaxLength({ min, max }: { min: number; max: number }, value: string): InputStatus {
-//   const valid = Boolean(value.length >= min && value.length <= max);
-//   return {
-//     valid,
-//     error: valid ? undefined : `${min} caractères min / ${max} caractères max`,
-//   };
-// }
-
 export function validate(value: string, rules: Rule[]): InputStatus {
   for (const rule of rules) {
     const result = rule(value);
