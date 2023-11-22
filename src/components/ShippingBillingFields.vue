@@ -1,10 +1,13 @@
 <script lang="ts" setup>
+import { computed } from "vue";
 import { BillingInfos, ShippingInfos, isBilling } from "../types/billingShipping";
 import { Countries } from "../types/locations";
+import { validate, isRequired, minMaxLength, isEmailValid } from "../utils/validateInput";
 import TextInput from "./TextInput.vue";
 const props = defineProps<{
   data: ShippingInfos | BillingInfos;
   countries: Countries[] | undefined;
+  errors: [];
 }>();
 
 const type = isBilling(props.data) ? "shipping" : "billing";
@@ -37,7 +40,7 @@ const type = isBilling(props.data) ? "shipping" : "billing";
   </div>
   <div class="col-12">
     <label :for="`${type}-country`">Pays</label>
-    <select :id="`${type}-country`" v-if="countries" class="form-select">
+    <select :id="`${type}-country`" v-if="countries" class="form-select" v-model="data.country">
       <option v-for="country of countries" :value="country.code">
         {{ country.name }}
       </option>

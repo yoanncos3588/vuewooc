@@ -16,6 +16,7 @@
     "bootstrap": "^5.3.2",
     "change-case": "^5.1.2",
     "crypto-js": "^4.2.0",
+    "email-validator": "^2.0.4",
     "oauth-1.0a": "^2.2.6",
     "pinia": "^2.1.7",
     "sass": "^1.69.5",

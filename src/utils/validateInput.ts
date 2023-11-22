@@ -1,3 +1,5 @@
+import * as EmailValidator from "email-validator";
+
 export interface InputStatus {
   valid: boolean;
   error?: string;
@@ -6,13 +8,38 @@ export interface InputStatus {
 type Rule = (value: string) => InputStatus;
 
 export function isRequired(value: string): InputStatus {
-  console.log(value);
   const valid = Boolean(value);
   return {
     valid,
     error: valid ? undefined : "Obligatoire",
   };
 }
+
+export function isEmailValid(value: string): InputStatus {
+  const valid = EmailValidator.validate(value);
+  return {
+    valid,
+    error: valid ? undefined : "Email non valide",
+  };
+}
+
+export function minMaxLength({ min, max }: { min: number; max: number }): Rule {
+  return function (value: string): InputStatus {
+    const valid = Boolean(value.length >= min && value.length <= max);
+    return {
+      valid,
+      error: valid ? undefined : `${min} caractères min / ${max} caractères max`,
+    };
+  };
+}
+
+// export function minMaxLength({ min, max }: { min: number; max: number }, value: string): InputStatus {
+//   const valid = Boolean(value.length >= min && value.length <= max);
+//   return {
+//     valid,
+//     error: valid ? undefined : `${min} caractères min / ${max} caractères max`,
+//   };
+// }
 
 export function validate(value: string, rules: Rule[]): InputStatus {
   for (const rule of rules) {

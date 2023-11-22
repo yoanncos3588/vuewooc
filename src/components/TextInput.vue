@@ -14,7 +14,6 @@ const emit = defineEmits<{
 
 function handleInput(e: Event) {
   const value = (e.target as HTMLInputElement).value;
-  console.log(value);
   emit("update:modelValue", value);
 }
 </script>
