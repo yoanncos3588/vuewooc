@@ -1,10 +1,8 @@
 <script lang="ts" setup>
 import { computed } from "vue";
 import { BillingInfos, ShippingInfos, isBilling } from "../types/billingShipping";
-import { Countries } from "../types/locations";
 import { validate, isRequired, minMaxLength, isEmailValid } from "../utils/validateInput";
 import TextInput from "./TextInput.vue";
-import Select from "./Select.vue";
 import SelectCountry from "./SelectCountry.vue";
 
 const props = defineProps<{
@@ -26,7 +24,7 @@ const validator = computed(() => {
     cityValid: validate(props.data.city, [isRequired, minMaxLength({ min: 1, max: 40 })]),
     stateValid: validate(props.data.state, [isRequired, minMaxLength({ min: 1, max: 40 })]),
     postcodeValid: validate(props.data.postcode, [isRequired, minMaxLength({ min: 1, max: 5 })]),
-    countryValid: validate(props.data.country, [isRequired, minMaxLength({ min: 1, max: 40 })]),
+    countryValid: validate(props.data.country, [isRequired]),
     emailValid: "email" in props.data ? validate(props.data.email, [isRequired, isEmailValid, minMaxLength({ min: 1, max: 40 })]) : undefined,
     phoneValid: "phone" in props.data ? validate(props.data.phone, [isRequired, minMaxLength({ min: 1, max: 25 })]) : undefined,
   };
@@ -70,18 +68,12 @@ function areFieldsvalid() {
     <TextInput :id="`${type}-postcode`" type="number" v-model="data.postcode" label="Code postal" :error="validator.postcodeValid.error" />
   </div>
   <div class="col-12">
-    <!-- <label :for="`${type}-country`">Pays</label>
-    <select :id="`${type}-country`" v-if="countries" class="form-select" v-model="data.country">
-      <option v-for="country of countries" :value="country.code">
-        {{ country.name }}
-      </option>
-    </select> -->
-    <SelectCountry :id="`${type}-country`" v-model="data.country" label="test" />
+    <SelectCountry :id="`${type}-country`" v-model="data.country" :error="validator.countryValid.error" />
   </div>
   <div class="col-md-6" v-if="'email' in data">
     <TextInput :id="`${type}-email`" type="email" v-model="data.email" label="Email" :error="validator.emailValid?.error" />
   </div>
   <div class="col-md-6" v-if="'phone' in data">
-    <TextInput :id="`${type}-phone`" type="number" v-model="data.phone" label="Téléphone" :error="validator.phoneValid?.error" />
+    <TextInput :id="`${type}-phone`" type="text" v-model="data.phone" label="Téléphone" :error="validator.phoneValid?.error" />
   </div>
 </template>
