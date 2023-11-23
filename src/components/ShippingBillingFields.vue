@@ -4,6 +4,7 @@ import { BillingInfos, ShippingInfos, isBilling } from "../types/billingShipping
 import { Countries } from "../types/locations";
 import { validate, isRequired, minMaxLength, isEmailValid } from "../utils/validateInput";
 import TextInput from "./TextInput.vue";
+
 const props = defineProps<{
   data: ShippingInfos | BillingInfos;
   countries: Countries[] | undefined;
@@ -35,6 +36,7 @@ function areFieldsvalid() {
     if (item !== undefined) {
       return item.valid !== undefined && item.valid;
     } else {
+      // some fields are missing on shipping type
       return true;
     }
   });

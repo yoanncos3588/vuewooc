@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
-const props = defineProps<{
+defineProps<{
   modelValue: string;
   type: string;
   label: string;
@@ -14,12 +14,15 @@ const emit = defineEmits<{
   (event: "update:modelValue", value: string): void;
 }>();
 
-const firstLoaded = ref(true);
+const firstFocus = ref(true);
 
 function handleInput(e: Event) {
-  firstLoaded.value = false;
   const value = (e.target as HTMLInputElement).value;
   emit("update:modelValue", value);
+}
+
+function handleFocusOut() {
+  firstFocus.value = false;
 }
 </script>
 
@@ -32,7 +35,8 @@ function handleInput(e: Event) {
     class="form-control"
     :value="modelValue"
     @input="handleInput"
-    :class="error && !firstLoaded ? `is-invalid` : ``"
+    @focusout="handleFocusOut"
+    :class="error && !firstFocus ? `is-invalid` : ``"
   />
   <div class="invalid-feedback" v-if="error">{{ error }}</div>
 </template>

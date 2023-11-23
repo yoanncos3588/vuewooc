@@ -75,7 +75,7 @@ async function handleSubmit() {
 
 <template>
   <form @submit.prevent="handleSubmit" class="row g-3">
-    <h2>Informations généralesssfef</h2>
+    <h2>Informations générale</h2>
 
     <div class="col-md-6">
       <TextInput id="firstname" type="text" v-model="customerData.firstName" label="Prénom" :error="firstNameValid.error" />
