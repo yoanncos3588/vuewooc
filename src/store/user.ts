@@ -3,6 +3,9 @@ import { axiosInstanceWoo, axiosInstanceWp } from "../utils/axios";
 import { AxiosError } from "axios";
 import { stripHTMLFromString } from "../utils/formatText";
 import { Customer, User } from "../types/user";
+import { camelCase, snakeCase } from "change-case/keys";
+import { ApiResponseStatus } from "../types/apiParams";
+import { apiResponseOk, getApiResponse } from "../utils/api";
 
 export interface userState {
   userData: User | null;
@@ -14,14 +17,15 @@ export const useUser = defineStore("user", {
   }),
 
   actions: {
-    async createCustomer(customer: Customer) {
+    async createCustomer(customer: Customer): Promise<ApiResponseStatus> {
       try {
-        const res = await axiosInstanceWoo.post("/customers");
-        if (res.status !== 200) {
-          throw Error();
-        }
-      } catch (error) {}
+        await axiosInstanceWoo.post("/customers", snakeCase(customer, 2));
+        return getApiResponse(true, "Votre compte a bien été créé, vous allez être redirigé");
+      } catch (error: unknown) {
+        return getApiResponse(false, undefined, error);
+      }
     },
+
     async login(username: string, password: string): Promise<string> {
       try {
         const res = await axiosInstanceWp.post("/jwt-auth/v1/token/", { username, password });
@@ -40,6 +44,7 @@ export const useUser = defineStore("user", {
         }
       }
     },
+
     async getCurrentUser() {
       try {
         const res = await axiosInstanceWp.post("/wp/v2/users/me");
@@ -57,6 +62,7 @@ export const useUser = defineStore("user", {
         console.log(error);
       }
     },
+
     async logout() {
       this.userData = null;
       localStorage.removeItem("token");

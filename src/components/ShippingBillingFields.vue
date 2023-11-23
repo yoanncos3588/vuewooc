@@ -20,7 +20,7 @@ const validator = computed(() => {
     firstNameValid: validate(props.data.firstName, [isRequired, minMaxLength({ min: 1, max: 40 })]),
     lastNameNameValid: validate(props.data.lastName, [isRequired, minMaxLength({ min: 1, max: 40 })]),
     companyValid: validate(props.data.company, [isRequired, minMaxLength({ min: 1, max: 40 })]),
-    address1Valid: validate(props.data.address1, [isRequired, minMaxLength({ min: 1, max: 40 })]),
+    address1Valid: validate(props.data.address_1, [isRequired, minMaxLength({ min: 1, max: 40 })]),
     cityValid: validate(props.data.city, [isRequired, minMaxLength({ min: 1, max: 40 })]),
     stateValid: validate(props.data.state, [isRequired, minMaxLength({ min: 1, max: 40 })]),
     postcodeValid: validate(props.data.postcode, [isRequired, minMaxLength({ min: 1, max: 5 })]),
@@ -53,10 +53,10 @@ function areFieldsvalid() {
     <TextInput :id="`${type}-company`" type="text" v-model="data.company" label="Société (optionnel)" :error="validator.companyValid.error" />
   </div>
   <div class="col-12">
-    <TextInput :id="`${type}-address1`" type="text" v-model="data.address1" label="Adresse" :error="validator.address1Valid.error" />
+    <TextInput :id="`${type}-address1`" type="text" v-model="data.address_1" label="Adresse" :error="validator.address1Valid.error" />
   </div>
   <div class="col-12">
-    <TextInput :id="`${type}-address2`" type="text" v-model="data.address2" label="Complément d'adresse (optionnel)" />
+    <TextInput :id="`${type}-address2`" type="text" v-model="data.address_2" label="Complément d'adresse (optionnel)" />
   </div>
   <div class="col-md-5">
     <TextInput :id="`${type}-city`" type="text" v-model="data.city" label="Ville" :error="validator.cityValid.error" />

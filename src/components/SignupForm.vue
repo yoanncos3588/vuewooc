@@ -6,15 +6,19 @@ import { isRequired, validate, isEmailValid, minMaxLength } from "../utils/valid
 import { Customer } from "../types/user";
 import { BillingInfos, ShippingInfos } from "../types/billingShipping";
 import ShippingBillingFields from "./ShippingBillingFields.vue";
+import { AlertLevels } from "../types/alert";
+import Alert from "./Alert.vue";
 
+// stores
 const userStore = useUser();
 
+// datas
 const billingData = reactive<BillingInfos>({
   firstName: "",
   lastName: "",
   company: "",
-  address1: "",
-  address2: "",
+  address_1: "",
+  address_2: "",
   city: "",
   state: "",
   postcode: "",
@@ -27,8 +31,8 @@ const shippingData = reactive<ShippingInfos>({
   firstName: "",
   lastName: "",
   company: "",
-  address1: "",
-  address2: "",
+  address_1: "",
+  address_2: "",
   city: "",
   state: "",
   postcode: "",
@@ -39,27 +43,57 @@ const customerData = reactive<Customer>({
   email: "",
   firstName: "",
   lastName: "",
-  username: "",
+  get username() {
+    return `${this.firstName} ${this.lastName}`;
+  },
   billing: billingData,
   shipping: shippingData,
 });
 
-// const level = ref<AlertLevels>("danger");
-// const formResult = ref("");
+// refs
+const userCreated = ref(false);
+const apiMessage = ref<string | undefined>(undefined);
 const billingComponent = ref<null | InstanceType<typeof ShippingBillingFields>>(null);
 const shippingComponent = ref<null | InstanceType<typeof ShippingBillingFields>>(null);
+const useShipInfosForBill = ref(true);
 
-const emailValid = computed(() => validate(customerData.email, [isRequired, isEmailValid]));
-const firstNameValid = computed(() => validate(customerData.firstName, [isRequired, minMaxLength({ min: 1, max: 40 })]));
-const lastNameValid = computed(() => validate(customerData.lastName, [isRequired, minMaxLength({ min: 1, max: 40 })]));
+// valid fields
+const validator = computed(() => {
+  return {
+    emailValid: validate(customerData.email, [isRequired, isEmailValid]),
+    firstNameValid: validate(customerData.firstName, [isRequired, minMaxLength({ min: 1, max: 40 })]),
+    lastNameValid: validate(customerData.lastName, [isRequired, minMaxLength({ min: 1, max: 40 })]),
+  };
+});
 
-/**
- * send login
- *
- */
+// valid form
+const isFormValid = computed(() => {
+  const generalFieldsValid = Object.values(validator.value).every((item) => {
+    if (item.valid) {
+      return true;
+    }
+  });
+  const shippingFieldsValid = useShipInfosForBill.value ? true : shippingComponent.value?.areFieldsvalid();
+  return Boolean(generalFieldsValid && billingComponent.value?.areFieldsvalid() && shippingFieldsValid);
+});
+
+// alert level
+const alertLevel = computed<AlertLevels>(() => {
+  return userCreated.value ? "success" : "danger";
+});
+
+// submit
 async function handleSubmit() {
-  console.log(billingComponent.value?.areFieldsvalid());
-  console.log(shippingComponent.value?.areFieldsvalid());
+  if (isFormValid) {
+    if (useShipInfosForBill.value) {
+      // put billing infos into shipping
+      const { email, phone, ...shippingInfos } = customerData.billing;
+      customerData.shipping = shippingInfos;
+    }
+    const result = await userStore.createCustomer(customerData);
+    apiMessage.value = result.message;
+    userCreated.value = result.valid;
+  }
 }
 </script>
 
@@ -68,24 +102,38 @@ async function handleSubmit() {
     <h2>Informations générale</h2>
 
     <div class="col-md-6">
-      <TextInput id="firstname" type="text" v-model="customerData.firstName" label="Prénom" :error="firstNameValid.error" />
+      <TextInput id="firstname" type="text" v-model="customerData.firstName" label="Prénom" :error="validator.firstNameValid.error" />
     </div>
     <div class="col-md-6">
-      <TextInput id="lastname" type="text" v-model="customerData.lastName" label="Nom" :error="lastNameValid.error" />
+      <TextInput id="lastname" type="text" v-model="customerData.lastName" label="Nom" :error="validator.lastNameValid.error" />
     </div>
     <div class="col-12">
-      <TextInput id="email" type="email" placeholder="monadresse@mail.com" v-model="customerData.email" label="Adresse email" :error="emailValid.error" />
+      <TextInput
+        id="email"
+        type="email"
+        placeholder="monadresse@mail.com"
+        v-model="customerData.email"
+        label="Adresse email"
+        :error="validator.emailValid.error"
+      />
     </div>
 
     <h2 class="mt-5">Informations de facturation</h2>
-    <ShippingBillingFields :data="billingData" ref="billingComponent" />
+    <ShippingBillingFields :data="billingData" ref="billingComponent" key="billing" />
 
     <h2 class="mt-5">Informations de livraison</h2>
 
-    <ShippingBillingFields :data="shippingData" ref="shippingComponent" />
+    <div class="col-12">
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" role="switch" id="useShipForBill" checked v-model="useShipInfosForBill" />
+        <label class="form-check-label" for="useShipForBill">Utiliser mes informations de facturation</label>
+      </div>
+    </div>
 
-    <!-- <Alert :message="formResult" :level="level" v-if="formResult" /> -->
-    <div class="mt-5 col-12">
+    <ShippingBillingFields :data="shippingData" ref="shippingComponent" v-if="!useShipInfosForBill" key="shipping" />
+
+    <div class="col-12 mt-5">
+      <Alert :message="apiMessage" :level="alertLevel" v-if="apiMessage" />
       <button type="submit" class="btn btn-primary">Créer mon compte</button>
     </div>
   </form>
