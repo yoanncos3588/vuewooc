@@ -4,10 +4,11 @@ import { BillingInfos, ShippingInfos, isBilling } from "../types/billingShipping
 import { Countries } from "../types/locations";
 import { validate, isRequired, minMaxLength, isEmailValid } from "../utils/validateInput";
 import TextInput from "./TextInput.vue";
+import Select from "./Select.vue";
+import SelectCountry from "./SelectCountry.vue";
 
 const props = defineProps<{
   data: ShippingInfos | BillingInfos;
-  countries: Countries[] | undefined;
 }>();
 
 defineExpose({
@@ -69,12 +70,13 @@ function areFieldsvalid() {
     <TextInput :id="`${type}-postcode`" type="number" v-model="data.postcode" label="Code postal" :error="validator.postcodeValid.error" />
   </div>
   <div class="col-12">
-    <label :for="`${type}-country`">Pays</label>
+    <!-- <label :for="`${type}-country`">Pays</label>
     <select :id="`${type}-country`" v-if="countries" class="form-select" v-model="data.country">
       <option v-for="country of countries" :value="country.code">
         {{ country.name }}
       </option>
-    </select>
+    </select> -->
+    <SelectCountry :id="`${type}-country`" v-model="data.country" label="test" />
   </div>
   <div class="col-md-6" v-if="'email' in data">
     <TextInput :id="`${type}-email`" type="email" v-model="data.email" label="Email" :error="validator.emailValid?.error" />

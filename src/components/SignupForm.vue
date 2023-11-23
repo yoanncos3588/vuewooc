@@ -1,11 +1,9 @@
 <script lang="ts" setup>
-import { computed, onMounted, reactive, ref } from "vue";
+import { computed, reactive, ref } from "vue";
 import { useUser } from "../store/user";
 import TextInput from "./TextInput.vue";
 import { isRequired, validate, isEmailValid, minMaxLength } from "../utils/validateInput";
 import { Customer } from "../types/user";
-import { getCountries } from "../utils/locations";
-import { Countries } from "../types/locations";
 import { BillingInfos, ShippingInfos } from "../types/billingShipping";
 import ShippingBillingFields from "./ShippingBillingFields.vue";
 
@@ -51,14 +49,6 @@ const customerData = reactive<Customer>({
 const billingComponent = ref<null | InstanceType<typeof ShippingBillingFields>>(null);
 const shippingComponent = ref<null | InstanceType<typeof ShippingBillingFields>>(null);
 
-let countries = ref<Countries[] | undefined>(undefined);
-
-onMounted(() => {
-  getCountries().then((result) => {
-    countries.value = result;
-  });
-});
-
 const emailValid = computed(() => validate(customerData.email, [isRequired, isEmailValid]));
 const firstNameValid = computed(() => validate(customerData.firstName, [isRequired, minMaxLength({ min: 1, max: 40 })]));
 const lastNameValid = computed(() => validate(customerData.lastName, [isRequired, minMaxLength({ min: 1, max: 40 })]));
@@ -88,11 +78,11 @@ async function handleSubmit() {
     </div>
 
     <h2 class="mt-5">Informations de facturation</h2>
-    <ShippingBillingFields :countries="countries" :data="billingData" ref="billingComponent" />
+    <ShippingBillingFields :data="billingData" ref="billingComponent" />
 
     <h2 class="mt-5">Informations de livraison</h2>
 
-    <ShippingBillingFields :countries="countries" :data="shippingData" ref="shippingComponent" />
+    <ShippingBillingFields :data="shippingData" ref="shippingComponent" />
 
     <!-- <Alert :message="formResult" :level="level" v-if="formResult" /> -->
     <div class="mt-5 col-12">
