@@ -42,13 +42,17 @@ async function handleSubmit() {
 
 <template>
   <form @submit.prevent="handleSubmit">
-    <div class="mb-3">
-      <TextInput id="email" type="email" placeholder="monadresse@mail.com" v-model="credentials.email" label="Adresse email" :error="emailValid.error" />
-    </div>
-    <div class="mb-3">
-      <TextInput id="password" type="password" v-model="credentials.password" label="Mot de passe" :error="passwordValid.error" />
-    </div>
+    <TextInput
+      id="email"
+      type="email"
+      placeholder="monadresse@mail.com"
+      v-model="credentials.email"
+      label="Adresse email"
+      :error="emailValid.error"
+      icon="fa-envelope"
+    />
+    <TextInput id="password" type="password" v-model="credentials.password" label="Mot de passe" :error="passwordValid.error" icon="fa-lock" />
     <Alert :message="formResult" :level="level" v-if="formResult" />
-    <button type="submit" class="btn btn-primary">Se connecter</button>
+    <button type="submit" class="button is-primary">Se connecter</button>
   </form>
 </template>

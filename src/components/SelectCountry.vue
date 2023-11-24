@@ -33,15 +33,18 @@ function handleSelect(e: Event) {
 </script>
 
 <template>
-  <label :for="id">Pays</label>
-  <select :id="id" v-if="countries" class="form-select" @change="handleSelect" @focusout="handleFocusOut" :class="error && !firstFocus ? `is-invalid` : ``">
-    <option selected disabled hidden>Choisissez un pays</option>
-    <option v-for="country of countries" :value="country.code">
-      {{ country.name }}
-    </option>
-  </select>
-  <select v-else disabled class="form-select animation-blink">
-    <option selected disabled hidden>Chargement des pays…</option>
-  </select>
-  <div class="invalid-feedback" v-if="error">Vous devez choisir un pays</div>
+  <div class="field">
+    <label :for="id" class="label">Pays</label>
+    <div class="control">
+      <div class="select is-fullwidth" :class="{ 'is-loading': !countries, 'is-danger': error && !firstFocus }">
+        <select :id="id" @change="handleSelect" @focusout="handleFocusOut">
+          <option selected disabled>Choisissez un pays</option>
+          <option v-for="country of countries" :value="country.code">
+            {{ country.name }}
+          </option>
+        </select>
+      </div>
+    </div>
+    <p class="help is-danger" v-if="error && !firstFocus">Vous devez choisir un pays</p>
+  </div>
 </template>

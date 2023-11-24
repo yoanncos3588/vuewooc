@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
 
-defineProps<{
+const props = defineProps<{
   modelValue: string;
   type: string;
   label: string;
   id: string;
   placeholder?: string;
+  icon?: string;
   error?: string;
 }>();
 
@@ -15,6 +16,9 @@ const emit = defineEmits<{
 }>();
 
 const firstFocus = ref(true);
+const cssHasIconsClass = computed(() => {
+  return `${props.icon ? "has-icons-left" : ""}`;
+});
 
 function handleInput(e: Event) {
   const value = (e.target as HTMLInputElement).value;
@@ -27,16 +31,23 @@ function handleFocusOut() {
 </script>
 
 <template>
-  <label :for="id" class="form-label">{{ label }}</label>
-  <input
-    :type="type"
-    :id="id"
-    :placeholder="placeholder"
-    class="form-control"
-    :value="modelValue"
-    @input="handleInput"
-    @focusout="handleFocusOut"
-    :class="error && !firstFocus ? `is-invalid` : ``"
-  />
-  <div class="invalid-feedback" v-if="error">{{ error }}</div>
+  <div class="field">
+    <label :for="id" class="label">{{ label }}</label>
+    <div class="control" :class="{ 'has-icons-left': icon }">
+      <input
+        :type="type"
+        :id="id"
+        :placeholder="placeholder"
+        class="input"
+        :value="modelValue"
+        @input="handleInput"
+        @focusout="handleFocusOut"
+        :class="error && !firstFocus ? `is-danger` : ``"
+      />
+      <span class="icon is-small is-left" v-if="icon">
+        <i class="fas" :class="icon"></i>
+      </span>
+    </div>
+    <p class="help is-danger" v-if="error && !firstFocus">{{ error }}</p>
+  </div>
 </template>

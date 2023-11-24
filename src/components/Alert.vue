@@ -8,5 +8,7 @@ defineProps<{
 </script>
 
 <template>
-  <div class="alert" :class="level ? `alert-${level}` : `alert-info`" role="alert">{{ message }}</div>
+  <div class="notification is-light" :class="level ? `is-${level}` : `is-info`">
+    {{ message }}
+  </div>
 </template>

@@ -43,37 +43,53 @@ function areFieldsvalid() {
 </script>
 
 <template>
-  <div class="col-md-6">
-    <TextInput :id="`${type}-firstname`" type="text" v-model="data.firstName" label="Prénom" :error="validator.firstNameValid.error" />
+  <div class="columns">
+    <div class="column is-6">
+      <TextInput :id="`${type}-firstname`" type="text" v-model="data.firstName" label="Prénom" :error="validator.firstNameValid.error" />
+    </div>
+    <div class="column is-6">
+      <TextInput :id="`${type}-lastname`" type="text" v-model="data.lastName" label="Nom" :error="validator.lastNameNameValid.error" />
+    </div>
   </div>
-  <div class="col-md-6">
-    <TextInput :id="`${type}-lastname`" type="text" v-model="data.lastName" label="Nom" :error="validator.lastNameNameValid.error" />
+  <div class="columns">
+    <div class="column is-12">
+      <TextInput :id="`${type}-address1`" type="text" v-model="data.address_1" label="Adresse" :error="validator.address1Valid.error" />
+    </div>
   </div>
-  <div class="col-12">
-    <TextInput :id="`${type}-company`" type="text" v-model="data.company" label="Société (optionnel)" :error="validator.companyValid.error" />
+
+  <div class="columns">
+    <div class="column is-6">
+      <TextInput :id="`${type}-address2`" type="text" v-model="data.address_2" label="Complément d'adresse (optionnel)" />
+    </div>
+    <div class="column is-6">
+      <TextInput :id="`${type}-company`" type="text" v-model="data.company" label="Société (optionnel)" :error="validator.companyValid.error" />
+    </div>
   </div>
-  <div class="col-12">
-    <TextInput :id="`${type}-address1`" type="text" v-model="data.address_1" label="Adresse" :error="validator.address1Valid.error" />
+
+  <div class="columns">
+    <div class="column is-5">
+      <TextInput :id="`${type}-city`" type="text" v-model="data.city" label="Ville" :error="validator.cityValid.error" />
+    </div>
+    <div class="column is-5">
+      <TextInput :id="`${type}-state`" type="text" v-model="data.state" label="Département" :error="validator.stateValid.error" />
+    </div>
+    <div class="column is-2">
+      <TextInput :id="`${type}-postcode`" type="number" v-model="data.postcode" label="CP" :error="validator.postcodeValid.error" />
+    </div>
   </div>
-  <div class="col-12">
-    <TextInput :id="`${type}-address2`" type="text" v-model="data.address_2" label="Complément d'adresse (optionnel)" />
+
+  <div class="columns">
+    <div class="column is-12">
+      <SelectCountry :id="`${type}-country`" v-model="data.country" :error="validator.countryValid.error" />
+    </div>
   </div>
-  <div class="col-md-5">
-    <TextInput :id="`${type}-city`" type="text" v-model="data.city" label="Ville" :error="validator.cityValid.error" />
-  </div>
-  <div class="col-md-5">
-    <TextInput :id="`${type}-state`" type="text" v-model="data.state" label="Département" :error="validator.stateValid.error" />
-  </div>
-  <div class="col-md-2">
-    <TextInput :id="`${type}-postcode`" type="number" v-model="data.postcode" label="Code postal" :error="validator.postcodeValid.error" />
-  </div>
-  <div class="col-12">
-    <SelectCountry :id="`${type}-country`" v-model="data.country" :error="validator.countryValid.error" />
-  </div>
-  <div class="col-md-6" v-if="'email' in data">
-    <TextInput :id="`${type}-email`" type="email" v-model="data.email" label="Email" :error="validator.emailValid?.error" />
-  </div>
-  <div class="col-md-6" v-if="'phone' in data">
-    <TextInput :id="`${type}-phone`" type="text" v-model="data.phone" label="Téléphone" :error="validator.phoneValid?.error" />
+
+  <div class="columns">
+    <div class="column is-6">
+      <TextInput :id="`${type}-email`" type="email" v-model="data.email" label="Email" :error="validator.emailValid?.error" v-if="'email' in data" />
+    </div>
+    <div class="column is-6">
+      <TextInput :id="`${type}-phone`" type="text" v-model="data.phone" label="Téléphone" :error="validator.phoneValid?.error" v-if="'phone' in data" />
+    </div>
   </div>
 </template>
