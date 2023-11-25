@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import Signin from "../components/SigninForm.vue";
+import Title from "../components/Title.vue";
 </script>
 
 <template>
-  <h1 class="title is-1">Se connecter</h1>
+  <Title level="h1" size="1" text="Se connecter" />
   <Signin />
 </template>

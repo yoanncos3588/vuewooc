@@ -5,6 +5,7 @@ import Alert from "./Alert.vue";
 import { AlertLevels } from "../types/alert";
 import TextInput from "./TextInput.vue";
 import { isRequired, validate } from "../utils/validateInput";
+import Button from "./Button.vue";
 
 const userStore = useUser();
 
@@ -53,6 +54,6 @@ async function handleSubmit() {
     />
     <TextInput id="password" type="password" v-model="credentials.password" label="Mot de passe" :error="passwordValid.error" icon="fa-lock" />
     <Alert :message="formResult" :level="level" v-if="formResult" />
-    <button type="submit" class="button is-primary">Se connecter</button>
+    <Button type="submit" color="primary" label="Se connecter" />
   </form>
 </template>

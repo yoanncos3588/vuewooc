@@ -1,3 +1,8 @@
+<script setup lang="ts">
+import Button from "./Button.vue";
+import Dropdown from "./Dropdown.vue";
+</script>
+
 <template>
   <header>
     <div class="navbar is-light is-spaced">
@@ -33,35 +38,23 @@
         <div class="navbar-end">
           <div class="navbar-item">
             <div class="buttons">
-              <!-- <RouterLink to="/signup" class="button">connexion / inscription</RouterLink> -->
-              <div class="dropdown is-hoverable mr-4">
-                <div class="dropdown-trigger">
-                  <button class="button" aria-haspopup="true" aria-controls="auth-button">
-                    <span>connexion / inscription</span>
-                    <span class="icon is-small">
-                      <i class="fas fa-angle-down" aria-hidden="true"></i>
-                    </span>
-                  </button>
-                </div>
-                <div class="dropdown-menu" id="auth-button" role="menu">
-                  <div class="dropdown-content">
-                    <div class="dropdown-item">
-                      <span class="has-text-weight-bold is-block">Déjà client ?</span>
-                      <RouterLink to="/login" class="button is-primary mt-2 is-block">Se connecter</RouterLink>
-                    </div>
-                    <hr class="dropdown-divider" />
-                    <div class="dropdown-item">
-                      <span class="has-text-weight-bold is-block">Nouveau client ?</span>
-                      <RouterLink to="/signup" class="button is-primary mt-2 is-block">Créer un compte</RouterLink>
-                    </div>
+              <Dropdown id="auth-button">
+                <template v-slot:trigger>
+                  <Button label="connexion / inscription" icon="fa-angle-down" :aria="{ 'aria-controls': 'auth-button' }"></Button>
+                </template>
+                <template v-slot:content>
+                  <div class="dropdown-item">
+                    <span class="has-text-weight-bold is-block">Déjà client ?</span>
+                    <RouterLink to="/login" class="button is-primary mt-2 is-block">Se connecter</RouterLink>
                   </div>
-                </div>
-              </div>
-              <RouterLink class="button is-white" to="/cart">
-                <span class="icon">
-                  <i class="fa-solid fa-cart-shopping"></i>
-                </span>
-              </RouterLink>
+                  <hr class="dropdown-divider" />
+                  <div class="dropdown-item">
+                    <span class="has-text-weight-bold is-block">Nouveau client ?</span>
+                    <RouterLink to="/signup" class="button is-primary mt-2 is-block">Créer un compte</RouterLink>
+                  </div>
+                </template>
+              </Dropdown>
+              <Button color="white" to="/cart" icon="fa-solid fa-cart-shopping" />
             </div>
           </div>
         </div>
@@ -69,9 +62,9 @@
     </div>
     <div class="has-background-info py-2 section">
       <nav class="is-flex buttons">
-        <RouterLink to="/" class="button is-info"><strong>Menu 1</strong></RouterLink>
-        <RouterLink to="/" class="button is-info"><strong>Menu 2</strong></RouterLink>
-        <RouterLink to="/" class="button is-info"><strong>Menu 3</strong></RouterLink>
+        <Button to="/" color="info" label="Menu 1" bold />
+        <Button to="/" color="info" label="Menu 2" bold />
+        <Button to="/" color="info" label="Menu 3" bold />
       </nav>
     </div>
   </header>

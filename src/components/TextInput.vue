@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
+import Icon from "./Icon.vue";
 
 const props = defineProps<{
   modelValue: string;
@@ -16,9 +17,6 @@ const emit = defineEmits<{
 }>();
 
 const firstFocus = ref(true);
-const cssHasIconsClass = computed(() => {
-  return `${props.icon ? "has-icons-left" : ""}`;
-});
 
 function handleInput(e: Event) {
   const value = (e.target as HTMLInputElement).value;
@@ -44,9 +42,7 @@ function handleFocusOut() {
         @focusout="handleFocusOut"
         :class="error && !firstFocus ? `is-danger` : ``"
       />
-      <span class="icon is-small is-left" v-if="icon">
-        <i class="fas" :class="icon"></i>
-      </span>
+      <Icon :class="icon" position="left" v-if="icon" />
     </div>
     <p class="help is-danger" v-if="error && !firstFocus">{{ error }}</p>
   </div>

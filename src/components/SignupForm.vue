@@ -8,6 +8,9 @@ import { BillingInfos, ShippingInfos } from "../types/billingShipping";
 import ShippingBillingFields from "./ShippingBillingFields.vue";
 import { AlertLevels } from "../types/alert";
 import Alert from "./Alert.vue";
+import Icon from "./Icon.vue";
+import Button from "./Button.vue";
+import Title from "./Title.vue";
 
 // stores
 const userStore = useUser();
@@ -57,6 +60,7 @@ const apiMessage = ref<string | undefined>(undefined);
 const billingComponent = ref<null | InstanceType<typeof ShippingBillingFields>>(null);
 const shippingComponent = ref<null | InstanceType<typeof ShippingBillingFields>>(null);
 const useShipInfosForBill = ref(true);
+const titleBilling = computed<string>(() => `Informations de facturation ${useShipInfosForBill ? "et livraison" : ""}`);
 
 // valid fields
 const validator = computed(() => {
@@ -106,14 +110,7 @@ async function handleSubmit() {
     <div class="columns">
       <div class="column is-6">
         <div class="box">
-          <h2 class="title is-4">
-            <span class="icon-text">
-              <span class="icon">
-                <i class="fa-solid fa-person-walking"></i>
-              </span>
-              <span>Informations générale</span>
-            </span>
-          </h2>
+          <Title level="h2" size="4" iconClass="fa-solid fa-person-walking" text="Informations générale" />
           <div class="columns">
             <div class="column is-6">
               <TextInput id="firstname" type="text" v-model="customerData.firstName" label="Prénom" :error="validator.firstNameValid.error" />
@@ -146,24 +143,14 @@ async function handleSubmit() {
     <div class="tile is-ancestor">
       <div class="tile is-6 is-vertical is-parent">
         <div class="box">
-          <h2 class="title is-4">
-            <span class="icon-text">
-              <span class="icon"><i class="fa-solid fa-file-invoice-dollar"></i></span>
-              <span>{{ `Informations de facturation ${useShipInfosForBill ? "et livraison" : ""}` }}</span>
-            </span>
-          </h2>
-          <h2 class="title is-4"></h2>
+          <Title level="h2" size="4" iconClass="fa-solid fa-file-invoice-dollar" :text="titleBilling" />
+
           <ShippingBillingFields :data="billingData" ref="billingComponent" key="billing" />
         </div>
       </div>
       <div class="tile is-6 is-vertical is-parent" v-if="!useShipInfosForBill" key="shipping">
         <div class="box">
-          <h2 class="title is-4">
-            <span class="icon-text">
-              <span class="icon"><i class="fa-solid fa-truck-fast"></i></span>
-              <span>Informations de livraison</span>
-            </span>
-          </h2>
+          <Title level="h2" size="4" iconClass="fa-solid fa-truck-fast" text="Informations de livraison" />
           <ShippingBillingFields :data="shippingData" ref="shippingComponent" />
         </div>
       </div>
@@ -171,6 +158,6 @@ async function handleSubmit() {
 
     <Alert :message="apiMessage" :level="alertLevel" v-if="apiMessage" />
 
-    <button type="submit" class="button is-primary" :class="{ 'is-loading': isLoading }">Créer mon compte</button>
+    <Button color="primary" :loading="isLoading" label="Créer mon compte" type="submit" />
   </form>
 </template>

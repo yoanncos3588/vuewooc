@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import SignupForm from "../components/SignupForm.vue";
+import Title from "../components/Title.vue";
 </script>
 
 <template>
-  <h1 class="title is-1">S'inscrire</h1>
+  <Title level="h1" size="1" text="S'inscrire" />
   <SignupForm />
 </template>
