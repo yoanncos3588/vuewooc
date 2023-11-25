@@ -1,57 +1,78 @@
 <template>
-  <header class="navbar navbar-expand-lg">
-    <!-- <nav class="navbar navbar-expand-lg bg-body-tertiary w-100">
-      <div class="container-fluid">
-        <RouterLink class="navbar-brand" to="/">WoocSHOP</RouterLink>
+  <header>
+    <div class="navbar is-light is-spaced">
+      <div class="navbar-brand">
+        <RouterLink to="/" class="navbar-item has-text-weight-bold is-uppercase is-size-4 has-text-info">
+          <span class="has-text-primary">Vue</span>Wooc
+        </RouterLink>
 
-        <form class="d-flex" role="search">
-          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" />
-          <button class="btn btn-outline-success" type="submit">Search</button>
-        </form>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="offcanvas"
-          data-bs-target="#offCanvasNav"
-          aria-controls="offCanvasNav"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
+        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
 
-        <div id="offCanvasNav" class="offcanvas offcanvas-end" aria-labelledby="offCanvasNavLabel">
-          <div class="offcanvas-body">
-            <ul class="navbar-nav">
-              <li class="nav-item">
-                <a href="#" class="nav-link">Link 1</a>
-              </li>
-              <li class="nav-item">
-                <a href="#" class="nav-link">Link 2</a>
-              </li>
-            </ul>
+      <div class="navbar-menu">
+        <div class="navbar-start">
+          <form>
+            <div class="field has-addons">
+              <div class="control is-expanded">
+                <input type="text" class="input" placeholder="Rechercher un produit" />
+              </div>
+              <div class="control">
+                <RouterLink to="/search" class="button is-primary">
+                  <span class="icon is-small">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                  </span>
+                </RouterLink>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="navbar-end">
+          <div class="navbar-item">
+            <div class="buttons">
+              <!-- <RouterLink to="/signup" class="button">connexion / inscription</RouterLink> -->
+              <div class="dropdown is-hoverable mr-4">
+                <div class="dropdown-trigger">
+                  <button class="button" aria-haspopup="true" aria-controls="auth-button">
+                    <span>connexion / inscription</span>
+                    <span class="icon is-small">
+                      <i class="fas fa-angle-down" aria-hidden="true"></i>
+                    </span>
+                  </button>
+                </div>
+                <div class="dropdown-menu" id="auth-button" role="menu">
+                  <div class="dropdown-content">
+                    <div class="dropdown-item">
+                      <span class="has-text-weight-bold is-block">Déjà client ?</span>
+                      <RouterLink to="/login" class="button is-primary mt-2 is-block">Se connecter</RouterLink>
+                    </div>
+                    <hr class="dropdown-divider" />
+                    <div class="dropdown-item">
+                      <span class="has-text-weight-bold is-block">Nouveau client ?</span>
+                      <RouterLink to="/signup" class="button is-primary mt-2 is-block">Créer un compte</RouterLink>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <RouterLink class="button is-white" to="/cart">
+                <span class="icon">
+                  <i class="fa-solid fa-cart-shopping"></i>
+                </span>
+              </RouterLink>
+            </div>
           </div>
         </div>
       </div>
-    </nav> -->
-    <nav class="navbar navbar-expand-lg bg-body-tertiary fixed-top">
-      <a class="navbar-brand" href="#">Offcanvas navbar</a>
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-bs-toggle="offcanvas"
-        data-bs-target="#navbarOffcanvasLg"
-        aria-controls="navbarOffcanvasLg"
-        aria-label="Toggle navigation"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="offcanvas offcanvas-end" tabindex="-1" id="navbarOffcanvasLg" aria-labelledby="navbarOffcanvasLgLabel">
-        <ul>
-          <li>or</li>
-          <li>nz</li>
-          <li>nzef</li>
-        </ul>
-      </div>
-    </nav>
+    </div>
+    <div class="has-background-info py-2 section">
+      <nav class="is-flex buttons">
+        <RouterLink to="/" class="button is-info"><strong>Menu 1</strong></RouterLink>
+        <RouterLink to="/" class="button is-info"><strong>Menu 2</strong></RouterLink>
+        <RouterLink to="/" class="button is-info"><strong>Menu 3</strong></RouterLink>
+      </nav>
+    </div>
   </header>
 </template>
