@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import { useUser } from "../store/user";
 import Button from "./Button.vue";
 import Dropdown from "./Dropdown.vue";
+
+const userStore = useUser();
 </script>
 
 <template>
@@ -11,7 +14,7 @@ import Dropdown from "./Dropdown.vue";
           <span class="has-text-primary">Vue</span>Wooc
         </RouterLink>
 
-        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" @click="$emit('toggleBurger')">
           <span aria-hidden="true"></span>
           <span aria-hidden="true"></span>
           <span aria-hidden="true"></span>
@@ -38,19 +41,33 @@ import Dropdown from "./Dropdown.vue";
         <div class="navbar-end">
           <div class="navbar-item">
             <div class="buttons">
-              <Dropdown id="auth-button">
+              <Dropdown id="auth-button" v-if="userStore.isUserConnected">
                 <template v-slot:trigger>
-                  <Button label="connexion / inscription" icon="fa-angle-down" :aria="{ 'aria-controls': 'auth-button' }"></Button>
+                  <Button label="connexion / inscription" icon="fa-angle-down" :aria="{ 'aria-controls': 'auth-button' }" />
                 </template>
                 <template v-slot:content>
                   <div class="dropdown-item">
                     <span class="has-text-weight-bold is-block">Déjà client ?</span>
-                    <RouterLink to="/login" class="button is-primary mt-2 is-block">Se connecter</RouterLink>
+                    <Button label="Se connecter" link="/login" />
                   </div>
                   <hr class="dropdown-divider" />
                   <div class="dropdown-item">
                     <span class="has-text-weight-bold is-block">Nouveau client ?</span>
-                    <RouterLink to="/signup" class="button is-primary mt-2 is-block">Créer un compte</RouterLink>
+                    <Button label="S'inscrire" link="/signup" />
+                  </div>
+                </template>
+              </Dropdown>
+              <Dropdown id="show-user-menu" v-else>
+                <template v-slot:trigger>
+                  <Button label="mon compte" icon="fa-angle-down" :aria="{ 'aria-controls': 'show-user-menu' }"></Button>
+                </template>
+                <template v-slot:content>
+                  <div class="dropdown-item">
+                    <RouterLink to="#">Mes informations</RouterLink>
+                  </div>
+                  <hr class="dropdown-divider" />
+                  <div class="dropdown-item">
+                    <RouterLink to="#">Mes commandes</RouterLink>
                   </div>
                 </template>
               </Dropdown>
@@ -60,7 +77,7 @@ import Dropdown from "./Dropdown.vue";
         </div>
       </div>
     </div>
-    <div class="has-background-info py-2 section">
+    <div class="has-background-info py-2 section is-hidden-touch">
       <nav class="is-flex buttons">
         <Button to="/" color="info" label="Menu 1" bold />
         <Button to="/" color="info" label="Menu 2" bold />

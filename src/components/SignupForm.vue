@@ -8,7 +8,6 @@ import { BillingInfos, ShippingInfos } from "../types/billingShipping";
 import ShippingBillingFields from "./ShippingBillingFields.vue";
 import { AlertLevels } from "../types/alert";
 import Alert from "./Alert.vue";
-import Icon from "./Icon.vue";
 import Button from "./Button.vue";
 import Title from "./Title.vue";
 

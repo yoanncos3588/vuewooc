@@ -1,0 +1,34 @@
+.drawer {
+  display: none;
+  height: 100vh;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 50;
+  &-close {
+    display: flex;
+    justify-content: flex-end;
+    position: relative;
+  }
+  &-content {
+    background-color: white;
+    height: 100%;
+    overflow-y: auto;
+    position: relative;
+    transform: translateX(-100%);
+    width: 85%;
+    z-index: 60;
+  }
+}
+
+.drawer {
+  &.is-visible {
+    display: flex;
+  }
+  &-content {
+    &.is-visible {
+      transform: translateX(0);
+    }
+  }
+}
