@@ -1,4 +1,5 @@
 import axios, { AxiosRequestHeaders } from "axios";
+import { Buffer } from "buffer";
 import { oauth } from "../utils/oauth";
 
 export const axiosInstanceWoo = axios.create({
@@ -28,10 +29,20 @@ export const axiosInstanceWp = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
 });
 
-/** WP INSTANCE WITH BEARER */
+/** WP INSTANCE CONNECTED USER */
 axiosInstanceWp.interceptors.request.use((config) => {
   if (localStorage.getItem("token")) {
     config.headers.Authorization = `Bearer ${localStorage.getItem("token")}`;
   }
+  return config;
+});
+
+export const axiosInstanceRest = axios.create({
+  baseURL: import.meta.env.VITE_API_URL,
+});
+
+axiosInstanceRest.interceptors.request.use((config) => {
+  config.headers.Authorization =
+    "Basic " + Buffer.from(`${import.meta.env.VITE_APP_REST_ACCOUNT}:${import.meta.env.VITE_APP_REST_PASSWORD}`).toString("base64");
   return config;
 });

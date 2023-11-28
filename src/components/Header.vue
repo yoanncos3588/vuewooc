@@ -1,9 +1,15 @@
 <script setup lang="ts">
+import { useMenus } from "../store/menus";
 import { useUser } from "../store/user";
 import Button from "./Button.vue";
 import Dropdown from "./Dropdown.vue";
+import MainMenu from "./MainMenu.vue";
 
 const userStore = useUser();
+
+const menusStore = useMenus();
+
+menusStore.fetchMenu(40);
 </script>
 
 <template>
@@ -48,12 +54,12 @@ const userStore = useUser();
                 <template v-slot:content>
                   <div class="dropdown-item">
                     <span class="has-text-weight-bold is-block">Déjà client ?</span>
-                    <Button label="Se connecter" link="/login" />
+                    <Button label="Se connecter" to="/login" />
                   </div>
                   <hr class="dropdown-divider" />
                   <div class="dropdown-item">
                     <span class="has-text-weight-bold is-block">Nouveau client ?</span>
-                    <Button label="S'inscrire" link="/signup" />
+                    <Button label="S'inscrire" to="/signup" />
                   </div>
                 </template>
               </Dropdown>
@@ -78,10 +84,8 @@ const userStore = useUser();
       </div>
     </div>
     <div class="has-background-info py-2 section is-hidden-touch">
-      <nav class="is-flex buttons">
-        <Button to="/" color="info" label="Menu 1" bold />
-        <Button to="/" color="info" label="Menu 2" bold />
-        <Button to="/" color="info" label="Menu 3" bold />
+      <nav class="">
+        <MainMenu class="is-flex" />
       </nav>
     </div>
   </header>

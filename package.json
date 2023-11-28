@@ -12,6 +12,7 @@
     "@popperjs/core": "^2.11.8",
     "@types/crypto-js": "^4.2.1",
     "axios": "^1.6.2",
+    "buffer": "^6.0.3",
     "bulma": "^0.9.4",
     "change-case": "^5.1.2",
     "crypto-js": "^4.2.0",

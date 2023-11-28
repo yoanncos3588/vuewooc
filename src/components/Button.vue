@@ -7,7 +7,7 @@ interface Arias {
   [key: string]: string;
 }
 const props = defineProps<{
-  link?: string;
+  to?: string;
   aria?: Arias;
   label?: string;
   icon?: string;
@@ -29,17 +29,17 @@ const cssClass = computed(() => {
   value += props.bold ? `has-text-weight-bold ` : "";
   return value;
 });
-const htmlTag = computed(() => (props.link ? "router-link" : "button"));
+const htmlTag = computed(() => (props.to ? "router-link" : "button"));
 
 function click() {
-  if (!props.link) {
+  if (!props.to) {
     emit("click");
   }
 }
 </script>
 
 <template>
-  <component :is="htmlTag" :to="link" class="button" :class="cssClass" v-bind="aria" @onclick="click">
+  <component :is="htmlTag" :to="to" class="button" :class="cssClass" v-bind="aria" @onclick="click">
     <span v-if="label">
       {{ label }}
     </span>
