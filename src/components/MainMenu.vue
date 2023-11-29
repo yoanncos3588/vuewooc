@@ -9,10 +9,6 @@ defineProps<{
 }>();
 
 const menusStore = useMenus();
-
-if (!menusStore.mainMenu) {
-  menusStore.fetchMenu(40);
-}
 </script>
 
 <template>
