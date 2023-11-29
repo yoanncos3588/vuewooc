@@ -5,7 +5,7 @@ defineProps<{
 </script>
 
 <template>
-  <div class="dropdown is-hoverable mr-4">
+  <div class="dropdown is-hoverable">
     <div class="dropdown-trigger">
       <slot name="trigger"></slot>
     </div>

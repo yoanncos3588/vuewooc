@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { watch } from "vue";
+import MainMenu from "./MainMenu.vue";
 
 const props = defineProps<{
   isDrawerOpen: boolean;
@@ -24,11 +25,8 @@ function lockScroll() {
       <div class="drawer-close"><button class="delete is-medium" @click="$emit('toggleBurger')"></button></div>
       <nav class="menu">
         <p class="menu-label">Nos produits</p>
-        <ul class="menu-list">
-          <li><RouterLink to="1">Menu 1</RouterLink></li>
-          <li><RouterLink to="1">Menu 2</RouterLink></li>
-          <li><RouterLink to="1">Menu 3</RouterLink></li>
-        </ul>
+
+        <MainMenu class="menu-list" inDrawer />
         <p class="menu-label">Mon compte</p>
         <ul class="menu-list">
           <li><RouterLink to="1">Mes informations</RouterLink></li>
