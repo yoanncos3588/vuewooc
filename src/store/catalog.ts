@@ -69,4 +69,11 @@ export const useCatalog = defineStore("catalog", {
       this.products.set(dataProduct.id, camelCase(dataProduct) as Product);
     },
   },
+  getters: {
+    getFeaturedProducts: (state): Product[] => {
+      return Array.from(state.products)
+        .filter(([key, product]) => product.featured === true)
+        .map(([key, product]) => product);
+    },
+  },
 });
