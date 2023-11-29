@@ -4,19 +4,21 @@ import "vue3-carousel/dist/carousel.css";
 import { Product } from "../types/products";
 import CardProduct from "./CardProduct.vue";
 
-const props = defineProps<{
+defineProps<{
   products: Product[];
 }>();
 </script>
 
 <template>
-  <Carousel :items-to-show="4" :wrap-around="true">
+  <Carousel :items-to-show="5" :wrap-around="true">
     <Slide v-for="product in products" :key="product.id">
       <CardProduct
+        :id="product.id"
         :name="product.name"
         :slug="product.slug"
         :shortDescription="product.shortDescription"
-        :priceHtml="product.priceHtml"
+        :price="product.price"
+        :salePrice="product.salePrice"
         :onSale="product.onSale"
         :images="product.images"
       />

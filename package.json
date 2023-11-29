@@ -16,6 +16,7 @@
     "bulma": "^0.9.4",
     "change-case": "^5.1.2",
     "crypto-js": "^4.2.0",
+    "dompurify": "^3.0.6",
     "email-validator": "^2.0.4",
     "oauth-1.0a": "^2.2.6",
     "pinia": "^2.1.7",
@@ -25,6 +26,7 @@
     "vue3-carousel": "^0.3.1"
   },
   "devDependencies": {
+    "@types/dompurify": "^3.0.5",
     "@vitejs/plugin-vue": "^4.2.3",
     "typescript": "^5.0.2",
     "vite": "^4.4.5",

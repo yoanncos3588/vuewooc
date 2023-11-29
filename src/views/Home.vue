@@ -2,7 +2,6 @@
 import { useCatalog } from "../store/catalog";
 import Title from "../components/Title.vue";
 import "vue3-carousel/dist/carousel.css";
-import Carousel from "../components/Carousel.vue";
 import { onMounted } from "vue";
 import CarouselProducts from "../components/CarouselProducts.vue";
 
