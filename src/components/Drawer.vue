@@ -9,12 +9,13 @@ const props = defineProps<{
 watch(() => props.isDrawerOpen, lockScroll);
 
 function lockScroll() {
+  console.log("lockscroll");
   if (props.isDrawerOpen) {
     document.body.classList.add("is-clipped");
     document.querySelector("html")?.classList.add("is-clipped");
   } else {
     document.body.classList.remove("is-clipped");
-    document.querySelector("html")?.classList.add("is-clipped");
+    document.querySelector("html")?.classList.remove("is-clipped");
   }
 }
 </script>
