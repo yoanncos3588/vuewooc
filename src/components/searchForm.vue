@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <form>
+  <form class="container">
     <div class="field has-addons">
       <div class="control is-expanded">
         <input type="text" class="input" placeholder="Rechercher un produit" />

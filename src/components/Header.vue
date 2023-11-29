@@ -71,5 +71,8 @@ const userStore = useUser();
         <MainMenu class="is-flex" />
       </nav>
     </div>
+    <div class="has-background-info py-2 section is-flex is-hidden-desktop">
+      <SearchForm />
+    </div>
   </header>
 </template>
