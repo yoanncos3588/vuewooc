@@ -3,6 +3,7 @@ import { useUser } from "../store/user";
 import Button from "./Button.vue";
 import Dropdown from "./Dropdown.vue";
 import MainMenu from "./MainMenu.vue";
+import SearchForm from "./searchForm.vue";
 
 const userStore = useUser();
 </script>
@@ -24,24 +25,11 @@ const userStore = useUser();
 
       <div class="navbar-menu">
         <div class="navbar-start">
-          <form>
-            <div class="field has-addons">
-              <div class="control is-expanded">
-                <input type="text" class="input" placeholder="Rechercher un produit" />
-              </div>
-              <div class="control">
-                <RouterLink to="/search" class="button is-primary">
-                  <span class="icon is-small">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                  </span>
-                </RouterLink>
-              </div>
-            </div>
-          </form>
+          <SearchForm />
         </div>
         <div class="navbar-end">
           <div class="navbar-item">
-            <div class="buttons">
+            <div class="navbar-item-user mr-4">
               <Dropdown id="auth-button" v-if="userStore.isUserConnected">
                 <template v-slot:trigger>
                   <Button label="connexion / inscription" icon="fa-angle-down" :aria="{ 'aria-controls': 'auth-button' }" />
@@ -72,8 +60,8 @@ const userStore = useUser();
                   </div>
                 </template>
               </Dropdown>
-              <Button color="white" to="/cart" icon="fa-solid fa-cart-shopping" />
             </div>
+            <Button color="white" to="/cart" icon="fa-solid fa-cart-shopping" />
           </div>
         </div>
       </div>

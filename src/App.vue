@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import Drawer from "./components/Drawer.vue";
 import Header from "./components/Header.vue";
+import Footer from "./components/Footer.vue";
 import { useMenus } from "./store/menus";
 
 const menusStore = useMenus();
@@ -20,11 +21,12 @@ if (!menusStore.mainMenu) {
 <template>
   <Drawer :isDrawerOpen="isDrawerOpen" @toggleBurger="toggleBurger" />
   <Header @toggleBurger="toggleBurger" />
-  <main>
+  <main class="my-5 px-5">
     <div class="container">
       <RouterView />
     </div>
   </main>
+  <Footer />
 </template>
 
 <style scoped></style>
