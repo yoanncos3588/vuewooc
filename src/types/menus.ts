@@ -9,5 +9,5 @@ export interface MenuItems {
   objectId: number;
   parent: number;
   menuOrder: number;
-  isParent: boolean;
+  childrens: MenuItems[];
 }

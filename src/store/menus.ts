@@ -16,43 +16,37 @@ export const useMenus = defineStore("menus", {
       try {
         const { data }: { data: MenuItems[] } = await axiosInstanceRest(`/wp/v2/menu-items?menus=${id}`);
 
-        // create a Map copy with object ref
-        const resMap = new Map<number, MenuItems>();
-        data.forEach((item) => resMap.set(item.id, item));
-
-        data.forEach((menuItem, index) => {
-          menuItem.url = menuItem.url.replace(import.meta.env.VITE_API_DOMAIN, "");
-          // add prop isParent to item or remove if item parent has parent value too
-          if (menuItem.parent !== 0) {
-            const parent = resMap.get(menuItem.parent);
-            if (parent && parent.parent === 0) {
-              // parent menu is find and has no parent
-              parent.isParent = true;
-            } else {
-              if (parent) {
-                // parent exist and have parent means depth 2 submenu, so we delete it
-                data.splice(index, 1);
-              }
-            }
-          } else {
-            // top level menu
-            menuItem.isParent = false;
-          }
-        });
-
         // keeping only needed keys and format
         const cleanMenu = data.map((menuItem) => {
-          menuItem = camelCase(menuItem) as MenuItems;
-          const { id, title, status, url, object, objectId, parent, menuOrder, isParent } = menuItem;
-          const cleanMenuItem: MenuItems = { id, title, status, url, object, objectId, parent, menuOrder, isParent };
+          menuItem = camelCase(menuItem, 2) as MenuItems;
+          const { id, title, status, url, object, objectId, parent, menuOrder, childrens } = menuItem;
+          const cleanMenuItem: MenuItems = { id, title, status, url, object, objectId, parent, menuOrder, childrens };
           return cleanMenuItem;
         });
 
-        //TODO create array with menu hierarchy
+        // create a Map copy with object reference, use for delete and find elements in array
+        const dataMap = new Map<number, MenuItems>();
+        cleanMenu.forEach((item) => dataMap.set(item.id, item));
+
+        cleanMenu.forEach((menuItem) => {
+          menuItem.url = menuItem.url.replace(import.meta.env.VITE_API_DOMAIN, "");
+          menuItem.childrens = [];
+          // add prop isParent to item or remove if item parent has parent value too
+          if (menuItem.parent !== 0) {
+            const parent = dataMap.get(menuItem.parent);
+            if (parent && parent.parent === 0) {
+              // parent menu is find and has no parent
+              parent.childrens.push(menuItem);
+              dataMap.delete(menuItem.id);
+            }
+          }
+        });
+
+        const finalMenu = [...dataMap.values()];
 
         if (id === 40) {
-          this.mainMenu = cleanMenu;
-          window.localStorage.setItem(`mainMenu`, JSON.stringify(data));
+          this.mainMenu = finalMenu;
+          window.localStorage.setItem(`mainMenu`, JSON.stringify(finalMenu));
         }
       } catch (error) {
         console.log(error);

@@ -1,15 +1,10 @@
 <script setup lang="ts">
-import { useMenus } from "../store/menus";
 import { useUser } from "../store/user";
 import Button from "./Button.vue";
 import Dropdown from "./Dropdown.vue";
 import MainMenu from "./MainMenu.vue";
 
 const userStore = useUser();
-
-const menusStore = useMenus();
-
-menusStore.fetchMenu(40);
 </script>
 
 <template>
