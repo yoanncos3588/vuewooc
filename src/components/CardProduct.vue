@@ -3,6 +3,7 @@ import { computed } from "vue";
 import { ProductImages } from "../types/products";
 import ProductPrice from "./ProductPrice.vue";
 import Title from "./Title.vue";
+import Tag from "./Tag.vue";
 import TextClamp from "vue3-text-clamp";
 import { stripHTMLFromString } from "../utils/formatText";
 
@@ -23,6 +24,9 @@ const description = computed(() => stripHTMLFromString(props.shortDescription));
   <article class="card card-product">
     <div class="card-image">
       <RouterLink :to="slug">
+        <div class="card-product__sale" v-show="onSale">
+          <Tag color="danger" text="promo" />
+        </div>
         <figure class="image is-square">
           <img :src="images[0].src" :alt="`Image du produit ${name}`" />
         </figure>
@@ -31,7 +35,7 @@ const description = computed(() => stripHTMLFromString(props.shortDescription));
     <div class="card-content card-product__content">
       <div class="card-product__title mb-4">
         <RouterLink :to="slug">
-          <Title :text="name" level="h2" size="4" />
+          <Title :text="name" level="h2" size="5" />
         </RouterLink>
       </div>
       <TextClamp :max-lines="2" :text="description"></TextClamp>

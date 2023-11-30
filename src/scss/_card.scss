@@ -15,6 +15,10 @@
     line-clamp: 3;
     -webkit-line-clamp: 3;
   }
-  &__price {
+  &__sale {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    z-index: 1;
   }
 }

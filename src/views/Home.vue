@@ -1,20 +1,17 @@
 <script setup lang="ts">
-import { useCatalog } from "../store/catalog";
 import Title from "../components/Title.vue";
 import "vue3-carousel/dist/carousel.css";
-import { onMounted } from "vue";
-import CarouselProducts from "../components/CarouselProducts.vue";
-
-const catalogStore = useCatalog();
-
-onMounted(async () => {
-  await catalogStore.fetchProducts({ featured: "true" });
-});
+import CarouselFeatured from "../components/CarouselFeatured.vue";
 </script>
 
 <template>
   <section>
     <Title level="h2" size="2" text="À la une" />
-    <CarouselProducts :products="catalogStore.getFeaturedProducts" />
+    <Suspense>
+      <template #default>
+        <CarouselFeatured />
+      </template>
+      <template #fallback><progress class="progress is-small" max="100">15%</progress></template>
+    </Suspense>
   </section>
 </template>
