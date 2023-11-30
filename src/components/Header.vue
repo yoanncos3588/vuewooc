@@ -2,7 +2,7 @@
 import { useUser } from "../store/user";
 import Button from "./Button.vue";
 import Dropdown from "./Dropdown.vue";
-import MainMenu from "./MainMenu.vue";
+import MenuMain from "./MenuMain.vue";
 import SearchForm from "./searchForm.vue";
 
 const userStore = useUser();
@@ -68,7 +68,7 @@ const userStore = useUser();
     </div>
     <div class="has-background-info py-2 section is-hidden-touch">
       <nav class="">
-        <MainMenu class="is-flex" />
+        <MenuMain class="is-flex" />
       </nav>
     </div>
     <div class="has-background-info py-2 section is-flex is-hidden-desktop">

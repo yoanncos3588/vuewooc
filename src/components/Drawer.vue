@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { watch } from "vue";
-import MainMenu from "./MainMenu.vue";
+import MenuMain from "./MenuMain.vue";
 
 const props = defineProps<{
   isDrawerOpen: boolean;
@@ -27,7 +27,7 @@ function lockScroll() {
       <nav class="menu">
         <p class="menu-label">Nos produits</p>
 
-        <MainMenu class="menu-list" inDrawer />
+        <MenuMain class="menu-list" inDrawer />
         <p class="menu-label">Mon compte</p>
         <ul class="menu-list">
           <li><RouterLink to="1">Mes informations</RouterLink></li>

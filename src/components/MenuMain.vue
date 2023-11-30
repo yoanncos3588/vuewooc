@@ -12,8 +12,8 @@ const menusStore = useMenus();
 </script>
 
 <template>
-  <ul :class="class" v-if="menusStore.mainMenu">
-    <template v-for="menu of menusStore.mainMenu">
+  <ul :class="class" v-if="menusStore.main">
+    <template v-for="menu of menusStore.main">
       <li>
         <!-- menu desktop -->
         <template v-if="!inDrawer">

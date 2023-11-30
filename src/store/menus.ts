@@ -4,12 +4,12 @@ import { camelCase } from "change-case/keys";
 import { axiosInstanceRest } from "../utils/axios";
 
 interface MenuState {
-  mainMenu: null | MenuItems[];
+  main: null | MenuItems[];
 }
 
 export const useMenus = defineStore("menus", {
   state: (): MenuState => ({
-    mainMenu: JSON.parse(localStorage.getItem("mainMenu")!),
+    main: JSON.parse(localStorage.getItem("mainMenu")!),
   }),
   actions: {
     async fetchMenu(id: number) {
