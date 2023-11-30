@@ -10,22 +10,26 @@ defineProps<{
 </script>
 
 <template>
-  <Carousel :items-to-show="5" :wrap-around="true">
-    <Slide v-for="product in products" :key="product.id">
-      <CardProduct
-        :id="product.id"
-        :name="product.name"
-        :slug="product.slug"
-        :shortDescription="product.shortDescription"
-        :price="product.price"
-        :salePrice="product.salePrice"
-        :onSale="product.onSale"
-        :images="product.images"
-      />
-    </Slide>
-    <template #addons>
-      <Navigation />
-      <Pagination />
-    </template>
-  </Carousel>
+  <div class="carousel-products">
+    <Carousel :items-to-show="5" :wrap-around="true">
+      <Slide v-for="product in products" :key="product.id">
+        <div class="carousel-products__slide-container">
+          <CardProduct
+            :id="product.id"
+            :name="product.name"
+            :slug="product.slug"
+            :shortDescription="product.shortDescription"
+            :price="product.price"
+            :salePrice="product.salePrice"
+            :onSale="product.onSale"
+            :images="product.images"
+          />
+        </div>
+      </Slide>
+      <template #addons>
+        <Navigation />
+        <Pagination />
+      </template>
+    </Carousel>
+  </div>
 </template>

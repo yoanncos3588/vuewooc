@@ -1,0 +1,18 @@
+.carousel-products {
+  .carousel__slide {
+    & > .carousel-products__slide-container {
+      height: 90%;
+      width: 90%;
+      &::after {
+        content: "";
+        display: block;
+        height: 30px;
+        width: 100%;
+      }
+      .card-product {
+        height: 100%;
+        width: 100%;
+      }
+    }
+  }
+}
