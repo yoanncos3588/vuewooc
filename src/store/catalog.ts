@@ -21,8 +21,10 @@ export const useCatalog = defineStore("catalog", {
   }),
 
   actions: {
-    async fetchCategories() {
-      const { data: dataCategories }: { data: ProductCategorie[] } = await axiosInstanceWoo.get("/products/categories");
+    async fetchCategories(params?: UrlParams) {
+      const { data: dataCategories }: { data: ProductCategorie[] } = await axiosInstanceWoo.get("/products/categories", {
+        params: params,
+      });
 
       let categoriesId: number[] = [];
       let categoriesMap = new Map<number, ProductCategorie>();
@@ -74,6 +76,9 @@ export const useCatalog = defineStore("catalog", {
       return Array.from(state.products)
         .filter(([key, product]) => product.featured === true)
         .map(([key, product]) => product);
+    },
+    getCategoryBySlug: (state) => {
+      return (slug: string) => state.categories.forEach((value, key) => value.slug === slug);
     },
   },
 });

@@ -45,7 +45,7 @@ export const useMenus = defineStore("menus", {
         const finalMenu = [...dataMap.values()];
 
         if (id === 40) {
-          this.mainMenu = finalMenu;
+          this.main = finalMenu;
           window.localStorage.setItem(`mainMenu`, JSON.stringify(finalMenu));
         }
       } catch (error) {

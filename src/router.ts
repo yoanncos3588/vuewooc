@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import Home from "./views/Home.vue";
 import Signup from "./views/Signup.vue";
 import Signin from "./views/Signin.vue";
+import Category from "./views/Category.vue";
 import { useUser } from "./store/user";
 
 export const router = createRouter({
@@ -34,6 +35,10 @@ export const router = createRouter({
           };
         }
       },
+    },
+    {
+      path: "/categorie/:slug+",
+      component: Category,
     },
   ],
 });
