@@ -4,20 +4,21 @@ import { ProductCategorie } from "../types/categories";
 import { camelCase } from "change-case/keys";
 import { Product } from "../types/products";
 import { UrlParams } from "../types/apiParams";
+import { toRaw } from "vue";
 
 export interface catalogState {
-  categoriesIds: number[]; //use for easy use of maps and filter (keep up to date!)
   productsIds: number[]; // use for easy use of maps and filter (keep up to date!)
   categories: Map<number, ProductCategorie>;
   products: Map<number, Product>;
+  paramsHistory: UrlParams[];
 }
 
 export const useCatalog = defineStore("catalog", {
   state: (): catalogState => ({
-    categoriesIds: [],
     productsIds: [],
     categories: new Map(),
     products: new Map(),
+    paramsHistory: [],
   }),
 
   actions: {
@@ -26,15 +27,12 @@ export const useCatalog = defineStore("catalog", {
         params: params,
       });
 
-      let categoriesId: number[] = [];
       let categoriesMap = new Map<number, ProductCategorie>();
 
       for (const categorie of dataCategories) {
-        categoriesId.push(categorie.id);
         categoriesMap.set(categorie.id, camelCase(categorie) as ProductCategorie);
       }
 
-      this.categoriesIds = categoriesId;
       this.categories = categoriesMap;
     },
 
@@ -47,19 +45,17 @@ export const useCatalog = defineStore("catalog", {
         params: params,
       });
 
-      let productsId: number[] = [];
-      let productsMap = new Map<number, Product>();
+      if (params) {
+        this.paramsHistory.push(params);
+      }
 
       for (const product of dataProducts) {
         if (!this.productsIds.includes(product.id)) {
           // important : product wasn't fetch before and wasn't in id's array
           this.productsIds.push(product.id);
         }
-        productsMap.set(product.id, camelCase(product) as Product);
+        this.products.set(product.id, camelCase(product) as Product);
       }
-
-      this.productsIds = productsId;
-      this.products = productsMap;
     },
 
     async fetchProductById(productId: number) {
@@ -78,7 +74,27 @@ export const useCatalog = defineStore("catalog", {
         .map(([key, product]) => product);
     },
     getCategoryBySlug: (state) => {
-      return (slug: string) => state.categories.forEach((value, key) => value.slug === slug);
+      return (slug: string) => {
+        let results;
+        state.categories.forEach((category) => {
+          if (category.slug === slug) {
+            results = category;
+          }
+        });
+        return results as ProductCategorie | undefined;
+      };
+    },
+    getProductsByCategory: (state) => {
+      return (slug: string) => {
+        let results: Array<Product> = [];
+        state.products.forEach((product) => {
+          const isInCategory = product.categories.some((category) => category.slug === slug);
+          if (isInCategory) {
+            results.push(toRaw(product));
+          }
+        });
+        return results;
+      };
     },
   },
 });
