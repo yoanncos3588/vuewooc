@@ -19,7 +19,7 @@ function toggleBurger() {
     <div class="container">
       <RouterView v-slot="{ Component }">
         <template v-if="Component">
-          <Suspense>
+          <Suspense :timeout="0">
             <component :is="Component"></component>
             <template #fallback>
               <Loading />
