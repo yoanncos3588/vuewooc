@@ -29,6 +29,7 @@ watch(
 );
 
 async function getProducts() {
+  console.log("getprod");
   category.value = catalogStore.getCategoryBySlug(getSlug(route.params.slug));
   if (category.value) {
     const param: UrlParams = { category: category.value.id };
@@ -56,7 +57,6 @@ await getProducts();
 <template>
   <section>
     <div v-if="category !== undefined">
-      <Title level="h2" size="2" :text="category.name" />
       <ProductsList :products="products" />
     </div>
   </section>
