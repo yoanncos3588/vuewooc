@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import Title from "../components/Title.vue";
-import { useRoute, useRouter } from "vue-router";
+import { onBeforeRouteUpdate, useRoute, useRouter } from "vue-router";
 import { useCatalog } from "../store/catalog";
-import { computed, ref, watch } from "vue";
+import { computed, ref } from "vue";
 import { sameParams } from "../utils/compare";
 import { UrlParams } from "../types/apiParams";
 import { ProductCategorie } from "../types/categories";
@@ -12,25 +12,19 @@ const route = useRoute();
 const router = useRouter();
 const catalogStore = useCatalog();
 
-const category = ref<ProductCategorie | undefined>(undefined);
+const category = ref<ProductCategorie | undefined>(catalogStore.getCategoryBySlug(getSlug(route.params.slug)));
 const products = computed(() => catalogStore.getProductsByCategory(getSlug(route.params.slug)));
 
-/**
- * watch slug in url and use last for subcategories
- * */
-watch(
-  () => route.params.slug,
-  async () => {
-    getProducts();
-  },
-  {
-    immediate: true,
+/** triggered when route params update */
+onBeforeRouteUpdate((to) => {
+  category.value = catalogStore.getCategoryBySlug(getSlug(to.params.slug));
+  if (!category.value) {
+    router.push("/404");
   }
-);
+  getProducts();
+});
 
 async function getProducts() {
-  console.log("getprod");
-  category.value = catalogStore.getCategoryBySlug(getSlug(route.params.slug));
   if (category.value) {
     const param: UrlParams = { category: category.value.id };
     if (!sameParams(catalogStore.paramsHistory, param)) {
@@ -57,6 +51,7 @@ await getProducts();
 <template>
   <section>
     <div v-if="category !== undefined">
+      <Title level="h2" size="2" :text="category.name" />
       <ProductsList :products="products" />
     </div>
   </section>
