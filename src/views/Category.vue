@@ -1,35 +1,26 @@
 <script setup lang="ts">
 import Title from "../components/Title.vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useCatalog } from "../store/catalog";
-import { ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { sameParams } from "../utils/compare";
 import { UrlParams } from "../types/apiParams";
-import { Product } from "../types/products";
 import { ProductCategorie } from "../types/categories";
+import ProductsList from "../components/ProductsList.vue";
 
 const route = useRoute();
+const router = useRouter();
 const catalogStore = useCatalog();
 
-const slug = ref<string>("");
-const isLoading = ref(true);
-const isError = ref(false);
-const products = ref<Array<Product> | undefined>(undefined);
 const category = ref<ProductCategorie | undefined>(undefined);
+const products = computed(() => catalogStore.getProductsByCategory(getSlug(route.params.slug)));
 
 /**
  * watch slug in url and use last for subcategories
- * TODO use ID to prevent same slug with subcategories /music/rock == /vynyl/rock
  * */
 watch(
   () => route.params.slug,
-  (newSlug: Array<string> | string) => {
-    if (Array.isArray(newSlug)) {
-      slug.value = newSlug[newSlug.length - 1];
-    } else {
-      slug.value = newSlug;
-    }
-    category.value = catalogStore.getCategoryBySlug(slug.value);
+  async () => {
     getProducts();
   },
   {
@@ -37,31 +28,36 @@ watch(
   }
 );
 
-/**
- * load from pinia or from api
- */
 async function getProducts() {
-  isLoading.value = true;
+  category.value = catalogStore.getCategoryBySlug(getSlug(route.params.slug));
   if (category.value) {
     const param: UrlParams = { category: category.value.id };
     if (!sameParams(catalogStore.paramsHistory, param)) {
-      // new request
+      // fetch products if query is not in history
       await catalogStore.fetchProducts(param);
     }
-    products.value = catalogStore.getProductsByCategory(slug.value);
-    isLoading.value = false;
   } else {
-    isLoading.value = false;
-    isError.value = true;
+    router.push("/404");
   }
 }
+
+/**
+ * Get slug from url (only last item)
+ * TODO use ID to prevent same slug with subcategories /music/rock == /vynyl/rock
+ * @param newSlug
+ */
+function getSlug(newSlug: Array<string> | string): string {
+  return Array.isArray(newSlug) ? newSlug[newSlug.length - 1] : newSlug;
+}
+
+await getProducts();
 </script>
 
 <template>
   <section>
-    <Title level="h2" size="2" text="À la une" />
-    <div v-for="prod in products" v-show="!isLoading && !isError">
-      {{ prod.id }}
+    <div v-if="category !== undefined">
+      <Title level="h2" size="2" :text="category.name" />
+      <ProductsList :products="products" />
     </div>
   </section>
 </template>

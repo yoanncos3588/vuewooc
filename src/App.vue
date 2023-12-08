@@ -16,7 +16,16 @@ function toggleBurger() {
   <Header @toggleBurger="toggleBurger" />
   <main class="my-5 px-5">
     <div class="container">
-      <RouterView />
+      <RouterView v-slot="{ Component }">
+        <template v-if="Component">
+          <Suspense>
+            <component :is="Component"></component>
+            <template #fallback>
+              <progress class="progress is-small" max="100">15%</progress>
+            </template>
+          </Suspense>
+        </template>
+      </RouterView>
     </div>
   </main>
   <Footer />
