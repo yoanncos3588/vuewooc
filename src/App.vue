@@ -3,6 +3,7 @@ import { ref } from "vue";
 import Drawer from "./components/Drawer.vue";
 import Header from "./components/Header.vue";
 import Footer from "./components/Footer.vue";
+import Loading from "./components/Loading.vue";
 
 const isDrawerOpen = ref(false);
 
@@ -21,7 +22,7 @@ function toggleBurger() {
           <Suspense>
             <component :is="Component"></component>
             <template #fallback>
-              <progress class="progress is-small" max="100">15%</progress>
+              <Loading />
             </template>
           </Suspense>
         </template>

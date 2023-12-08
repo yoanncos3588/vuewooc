@@ -7,15 +7,17 @@ import { sameParams } from "../utils/compare";
 import { UrlParams } from "../types/apiParams";
 import { ProductCategorie } from "../types/categories";
 import ProductsList from "../components/ProductsList.vue";
+import Loading from "../components/Loading.vue";
 
 const route = useRoute();
 const router = useRouter();
 const catalogStore = useCatalog();
 
 const category = ref<ProductCategorie | undefined>(catalogStore.getCategoryBySlug(getSlug(route.params.slug)));
+const isLoading = ref(false);
 const products = computed(() => catalogStore.getProductsByCategory(getSlug(route.params.slug)));
 
-/** triggered when route params update */
+/** triggered when updating route params */
 onBeforeRouteUpdate((to) => {
   category.value = catalogStore.getCategoryBySlug(getSlug(to.params.slug));
   if (!category.value) {
@@ -26,11 +28,13 @@ onBeforeRouteUpdate((to) => {
 
 async function getProducts() {
   if (category.value) {
+    isLoading.value = true;
     const param: UrlParams = { category: category.value.id };
     if (!sameParams(catalogStore.paramsHistory, param)) {
       // fetch products if query is not in history
       await catalogStore.fetchProducts(param);
     }
+    isLoading.value = false;
   } else {
     router.push("/404");
   }
@@ -52,7 +56,10 @@ await getProducts();
   <section>
     <div v-if="category !== undefined">
       <Title level="h2" size="2" :text="category.name" />
-      <ProductsList :products="products" />
+      <template v-if="!isLoading">
+        <ProductsList :products="products" />
+      </template>
+      <template v-else> <Loading /> </template>
     </div>
   </section>
 </template>

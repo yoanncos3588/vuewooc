@@ -8,8 +8,8 @@ defineProps<{
 </script>
 
 <template>
-  <ul class="grid-products">
-    <li v-for="product in products">
+  <ul class="columns is-multiline">
+    <li v-for="product in products" class="column is-4-tablet is-3-desktop">
       <CardProduct
         :id="product.id"
         :name="product.name"
