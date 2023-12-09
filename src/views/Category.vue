@@ -56,9 +56,7 @@ await getProducts();
   <section>
     <div v-if="category !== undefined">
       <Title level="h2" size="2" :text="category.name" />
-      <template v-if="!isLoading">
-        <ProductsList :products="products" />
-      </template>
+      <template v-if="!isLoading"><ProductsList :products="products" /></template>
       <template v-else> <Loading /> </template>
     </div>
   </section>

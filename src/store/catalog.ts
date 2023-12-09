@@ -70,8 +70,8 @@ export const useCatalog = defineStore("catalog", {
   getters: {
     getFeaturedProducts: (state): Product[] => {
       return Array.from(state.products)
-        .filter(([key, product]) => product.featured === true)
-        .map(([key, product]) => product);
+        .filter(([_key, product]) => product.featured === true)
+        .map(([_key, product]) => product);
     },
     getCategoryBySlug: (state) => {
       return (slug: string) => {
