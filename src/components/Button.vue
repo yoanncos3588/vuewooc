@@ -31,6 +31,17 @@ const cssClass = computed(() => {
 });
 const htmlTag = computed(() => (props.to ? "router-link" : "button"));
 
+function setAttributes() {
+  let attributes = {};
+  if (props.aria) {
+    attributes = { ...props.aria };
+  }
+  if (props.disabled) {
+    attributes = { disabled: true, ...attributes };
+  }
+  return attributes;
+}
+
 function click() {
   if (!props.to) {
     emit("click");
@@ -39,7 +50,7 @@ function click() {
 </script>
 
 <template>
-  <component :is="htmlTag" :to="to" class="button" :class="cssClass" v-bind="aria" @onclick="click" :disabled="disabled">
+  <component :is="htmlTag" :to="to" class="button" :class="cssClass" v-bind="setAttributes()" @onclick="click">
     <span v-if="label">
       {{ label }}
     </span>
