@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { MenuItems } from "../types/menus";
 import { camelCase } from "change-case/keys";
-import { axiosInstanceRest } from "../utils/axios";
+import { axiosInstanceRest } from "../modules/api/api";
 
 interface MenuState {
   main: null | MenuItems[];

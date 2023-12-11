@@ -1,5 +1,5 @@
+import { axiosInstanceWoo } from "../modules/api/api";
 import { Countries } from "../types/locations";
-import { axiosInstanceWoo } from "./axios";
 
 export async function getCountries(): Promise<Countries[] | undefined> {
   try {

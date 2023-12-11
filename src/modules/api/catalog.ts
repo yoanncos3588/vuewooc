@@ -1,8 +1,6 @@
-import { camelCase } from "change-case";
 import { ApiResponseStatus, UrlParams } from "../../types/apiParams";
 import { Product } from "../../types/products";
-import { axiosInstanceWoo } from "../../utils/axios";
-import { setApiResponseStatus } from "./api";
+import { axiosInstanceWoo, setApiResponseStatus } from "./api";
 
 const catalog = {
   /**

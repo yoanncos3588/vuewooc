@@ -1,8 +1,7 @@
 import { snakeCase } from "change-case/keys";
 import { Customer } from "../../types/user";
-import { axiosInstanceWoo, axiosInstanceWp } from "../../utils/axios";
 import { ApiResponseStatus } from "../../types/apiParams";
-import { setApiResponseStatus } from "./api";
+import { axiosInstanceWoo, axiosInstanceWp, setApiResponseStatus } from "./api";
 
 const user = {
   /**

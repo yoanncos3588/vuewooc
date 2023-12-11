@@ -1,5 +1,4 @@
 import { defineStore } from "pinia";
-import { axiosInstanceWoo } from "../utils/axios";
 import { ProductCategorie } from "../types/categories";
 import { camelCase } from "change-case/keys";
 import { Product } from "../types/products";
