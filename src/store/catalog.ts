@@ -11,7 +11,6 @@ export interface catalogState {
   productsIds: number[]; // use for easy use of maps and filter (keep up to date!)
   categories: Map<number, ProductCategorie>;
   products: Map<number, Product>;
-  paramsHistory: UrlParams[];
 }
 
 export const useCatalog = defineStore("catalog", {
@@ -19,12 +18,11 @@ export const useCatalog = defineStore("catalog", {
     productsIds: [],
     categories: new Map(),
     products: new Map(),
-    paramsHistory: [],
   }),
 
   actions: {
     /**
-     * Get all categories
+     * Get all categories and save them in pinia store
      * @param params
      */
     async fetchCategories() {
@@ -42,34 +40,34 @@ export const useCatalog = defineStore("catalog", {
     },
 
     /**
-     * Fetch products from api, with possibles filters
+     * Get products and save them in pinia store
      * @param params @type {UrlParams} : obj listing all parameters use to construct url parameters for filtering
      */
     async fetchProducts(params?: UrlParams) {
-      const { data: dataProducts }: { data: Product[] } = await axiosInstanceWoo.get("/products", {
-        params: params,
-      });
+      const resProducts = await api.catalog.fetchProducts(params);
 
-      if (params) {
-        this.paramsHistory.push(params);
-      }
-
-      for (const product of dataProducts) {
-        if (!this.productsIds.includes(product.id)) {
-          // important : product wasn't fetch before and wasn't in id's array
-          this.productsIds.push(product.id);
+      if (resProducts.valid && resProducts.payload) {
+        for (const product of resProducts.payload) {
+          this.products.set(product.id, camelCase(product) as Product);
         }
-        this.products.set(product.id, camelCase(product) as Product);
+      } else {
+        console.log("fetchProducts : " + resProducts.message);
       }
     },
 
+    /**
+     * Get product by id and save it in pinia store
+     * @param productId @type {number} : id of product to fetch
+     */
     async fetchProductById(productId: number) {
       const { data: dataProduct }: { data: Product } = await axiosInstanceWoo.get(`/products/${productId}`);
-      if (!this.productsIds.includes(dataProduct.id)) {
-        // important : product wasn't fetch before and wasn't in id's array
-        this.productsIds.push(productId);
+      const resProducts = await api.catalog.fetchProductById(productId);
+
+      if (resProducts.valid && resProducts.payload) {
+        this.products.set(dataProduct.id, camelCase(dataProduct) as Product);
+      } else {
+        console.log("fetchProductById" + resProducts.message);
       }
-      this.products.set(dataProduct.id, camelCase(dataProduct) as Product);
     },
   },
   getters: {

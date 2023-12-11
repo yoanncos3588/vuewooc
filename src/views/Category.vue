@@ -30,10 +30,7 @@ async function getProducts() {
   if (category.value) {
     isLoading.value = true;
     const param: UrlParams = { category: category.value.id };
-    if (!sameParams(catalogStore.paramsHistory, param)) {
-      // fetch products if query is not in history
-      await catalogStore.fetchProducts(param);
-    }
+    await catalogStore.fetchProducts(param);
     isLoading.value = false;
   } else {
     router.push("/404");
