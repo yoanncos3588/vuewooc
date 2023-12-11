@@ -3,7 +3,7 @@ import { useCatalog } from "../store/catalog";
 import CarouselProducts from "./CarouselProducts.vue";
 
 const catalogStore = useCatalog();
-await catalogStore.fetchProducts({ featured: "true" });
+await catalogStore.getProducts({ featured: "true" });
 </script>
 
 <template>

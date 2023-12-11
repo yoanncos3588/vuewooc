@@ -3,7 +3,6 @@ import Title from "../components/Title.vue";
 import { onBeforeRouteUpdate, useRoute, useRouter } from "vue-router";
 import { useCatalog } from "../store/catalog";
 import { computed, ref } from "vue";
-import { sameParams } from "../utils/compare";
 import { UrlParams } from "../types/apiParams";
 import { ProductCategorie } from "../types/categories";
 import ProductsList from "../components/ProductsList.vue";
@@ -30,7 +29,7 @@ async function getProducts() {
   if (category.value) {
     isLoading.value = true;
     const param: UrlParams = { category: category.value.id };
-    await catalogStore.fetchProducts(param);
+    await catalogStore.getProducts(param);
     isLoading.value = false;
   } else {
     router.push("/404");

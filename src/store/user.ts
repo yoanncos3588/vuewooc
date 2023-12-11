@@ -15,7 +15,7 @@ export const useUser = defineStore("user", {
   actions: {
     async login(token: string): Promise<ApiResponseStatus> {
       localStorage.setItem("token", token);
-      const resUser = await api.user.getCurrentUser();
+      const resUser = await api.user.fetchCurrentUser();
       if (resUser.valid && resUser.payload) {
         const localUser: User = {
           id: resUser.payload.id,

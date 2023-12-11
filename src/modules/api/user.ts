@@ -41,7 +41,7 @@ const user = {
    * https://developer.wordpress.org/rest-api/reference/users/#definition-example-request-2
    * @returns {ApiResponseStatus}
    */
-  getCurrentUser: async (): Promise<ApiResponseStatus> => {
+  fetchCurrentUser: async (): Promise<ApiResponseStatus> => {
     try {
       const { data } = await axiosInstanceWp.post("/wp/v2/users/me");
       return setApiResponseStatus(true, "Vous êtes bien connecté, vous allez être redirigé", data);

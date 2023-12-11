@@ -25,7 +25,7 @@ export const useCatalog = defineStore("catalog", {
      * Get all categories and save them in pinia store
      * @param params
      */
-    async fetchCategories() {
+    async getCategories() {
       const resCategories = await api.catalog.fetchCategories();
 
       if (resCategories.valid && resCategories.payload) {
@@ -43,7 +43,7 @@ export const useCatalog = defineStore("catalog", {
      * Get products and save them in pinia store
      * @param params @type {UrlParams} : obj listing all parameters use to construct url parameters for filtering
      */
-    async fetchProducts(params?: UrlParams) {
+    async getProducts(params?: UrlParams) {
       const resProducts = await api.catalog.fetchProducts(params);
 
       if (resProducts.valid && resProducts.payload) {
@@ -59,12 +59,11 @@ export const useCatalog = defineStore("catalog", {
      * Get product by id and save it in pinia store
      * @param productId @type {number} : id of product to fetch
      */
-    async fetchProductById(productId: number) {
-      const { data: dataProduct }: { data: Product } = await axiosInstanceWoo.get(`/products/${productId}`);
+    async getProductById(productId: number) {
       const resProducts = await api.catalog.fetchProductById(productId);
 
       if (resProducts.valid && resProducts.payload) {
-        this.products.set(dataProduct.id, camelCase(dataProduct) as Product);
+        this.products.set(resProducts.payload.id, camelCase(resProducts.payload) as Product);
       } else {
         console.log("fetchProductById" + resProducts.message);
       }
