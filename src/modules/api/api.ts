@@ -1,10 +1,12 @@
 import { ApiResponseStatus } from "../../types/apiParams";
 import { stripHTMLFromString } from "../../utils/formatText";
 import user from "./user";
+import catalog from "./catalog";
 import axios from "axios";
 
 const api = {
   user,
+  catalog,
 };
 
 /**

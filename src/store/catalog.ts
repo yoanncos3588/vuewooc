@@ -5,6 +5,7 @@ import { camelCase } from "change-case/keys";
 import { Product } from "../types/products";
 import { UrlParams } from "../types/apiParams";
 import { toRaw } from "vue";
+import api from "../modules/api/api";
 
 export interface catalogState {
   productsIds: number[]; // use for easy use of maps and filter (keep up to date!)
@@ -22,18 +23,22 @@ export const useCatalog = defineStore("catalog", {
   }),
 
   actions: {
-    async fetchCategories(params?: UrlParams) {
-      const { data: dataCategories }: { data: ProductCategorie[] } = await axiosInstanceWoo.get("/products/categories", {
-        params: params,
-      });
+    /**
+     * Get all categories
+     * @param params
+     */
+    async fetchCategories() {
+      const resCategories = await api.catalog.fetchCategories();
 
-      let categoriesMap = new Map<number, ProductCategorie>();
-
-      for (const categorie of dataCategories) {
-        categoriesMap.set(categorie.id, camelCase(categorie) as ProductCategorie);
+      if (resCategories.valid && resCategories.payload) {
+        let categoriesMap = new Map<number, ProductCategorie>();
+        for (const categorie of resCategories.payload) {
+          categoriesMap.set(categorie.id, camelCase(categorie, 2) as ProductCategorie);
+        }
+        this.categories = categoriesMap;
+      } else {
+        console.log("fetchCategories : " + resCategories.message);
       }
-
-      this.categories = categoriesMap;
     },
 
     /**

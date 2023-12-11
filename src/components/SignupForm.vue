@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { computed, reactive, ref } from "vue";
-import { useUser } from "../store/user";
 import TextInput from "./TextInput.vue";
 import { isRequired, validate, isEmailValid, minMaxLength } from "../utils/validateInput";
 import { Customer } from "../types/user";
