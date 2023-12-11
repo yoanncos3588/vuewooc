@@ -10,9 +10,7 @@ import { AlertLevels } from "../types/alert";
 import Alert from "./Alert.vue";
 import Button from "./Button.vue";
 import Title from "./Title.vue";
-
-// stores
-const userStore = useUser();
+import api from "../modules/api/api";
 
 // datas
 const billingData = reactive<BillingInfos>({
@@ -90,13 +88,12 @@ const alertLevel = computed<AlertLevels>(() => {
 async function handleSubmit() {
   isLoading.value = true;
   if (isFormValid.value) {
-    console.log("formvalid");
     if (useShipInfosForBill.value) {
       // put billing infos into shipping
       const { email, phone, ...shippingInfos } = customerData.billing;
       customerData.shipping = shippingInfos;
     }
-    const result = await userStore.createCustomer(customerData);
+    const result = await api.user.createCusomer(customerData);
     apiMessage.value = result.message;
     userCreated.value = result.valid;
   }

@@ -1,11 +1,7 @@
 import { defineStore } from "pinia";
-import { axiosInstanceWoo, axiosInstanceWp } from "../utils/axios";
-import { AxiosError } from "axios";
-import { stripHTMLFromString } from "../utils/formatText";
-import { Customer, User } from "../types/user";
-import { camelCase, snakeCase } from "change-case/keys";
+import { User } from "../types/user";
 import { ApiResponseStatus } from "../types/apiParams";
-import { apiResponseOk, getApiResponse } from "../utils/api";
+import api from "../modules/api/api";
 
 export interface userState {
   userData: User | null;
@@ -17,50 +13,22 @@ export const useUser = defineStore("user", {
   }),
 
   actions: {
-    async createCustomer(customer: Customer): Promise<ApiResponseStatus> {
-      try {
-        await axiosInstanceWoo.post("/customers", snakeCase(customer, 2));
-        return getApiResponse(true, "Votre compte a bien été créé, vous allez être redirigé");
-      } catch (error: unknown) {
-        return getApiResponse(false, undefined, error);
-      }
-    },
-
-    async login(username: string, password: string): Promise<string> {
-      try {
-        const res = await axiosInstanceWp.post("/jwt-auth/v1/token/", { username, password });
-        if (res.status !== 200) {
-          throw Error();
-        }
-        const data = res.data;
-        localStorage.setItem("token", data.token);
-        this.getCurrentUser();
-        return "";
-      } catch (error: unknown) {
-        if (error instanceof AxiosError) {
-          return stripHTMLFromString(error.response?.data.message);
-        } else {
-          return "Une erreur inconnue est survenue";
-        }
-      }
-    },
-
-    async getCurrentUser() {
-      try {
-        const res = await axiosInstanceWp.post("/wp/v2/users/me");
-        if (res.status !== 200) {
-          throw Error();
-        }
+    async login(token: string): Promise<ApiResponseStatus> {
+      localStorage.setItem("token", token);
+      const resUser = await api.user.getCurrentUser();
+      if (resUser.valid && resUser.payload) {
         const localUser: User = {
-          id: res.data.id,
-          username: res.data.username,
+          id: resUser.payload.id,
+          username: resUser.payload.username,
         };
-
         this.userData = localUser;
         localStorage.setItem("user", JSON.stringify(localUser));
-      } catch (error) {
-        console.log(error);
+      } else {
+        // logout if unable to get user from token or unexpected error happened
+        this.logout();
       }
+
+      return resUser;
     },
 
     async logout() {

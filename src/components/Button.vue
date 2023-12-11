@@ -39,7 +39,7 @@ function click() {
 </script>
 
 <template>
-  <component :is="htmlTag" :to="to" class="button" :class="cssClass" v-bind="aria" @onclick="click">
+  <component :is="htmlTag" :to="to" class="button" :class="cssClass" v-bind="aria" @onclick="click" :disabled="disabled">
     <span v-if="label">
       {{ label }}
     </span>

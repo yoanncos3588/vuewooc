@@ -30,7 +30,7 @@ const userStore = useUser();
         <div class="navbar-end">
           <div class="navbar-item">
             <div class="navbar-item-user mr-4">
-              <Dropdown id="auth-button" v-if="userStore.isUserConnected">
+              <Dropdown id="auth-button" v-if="!userStore.isUserConnected">
                 <template v-slot:trigger>
                   <Button label="connexion / inscription" icon="fa-angle-down" :aria="{ 'aria-controls': 'auth-button' }" />
                 </template>

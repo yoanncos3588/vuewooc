@@ -19,7 +19,7 @@ export const router = createRouter({
       component: Signup,
       beforeEnter: () => {
         const userStore = useUser();
-        if (userStore.userData) {
+        if (userStore.isUserConnected) {
           return {
             path: "/",
           };
@@ -31,7 +31,7 @@ export const router = createRouter({
       component: Signin,
       beforeEnter: () => {
         const userStore = useUser();
-        if (userStore.userData) {
+        if (userStore.isUserConnected) {
           return {
             path: "/",
           };

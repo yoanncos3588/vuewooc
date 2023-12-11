@@ -6,6 +6,7 @@ import { AlertLevels } from "../types/alert";
 import TextInput from "./TextInput.vue";
 import { isRequired, validate } from "../utils/validateInput";
 import Button from "./Button.vue";
+import api from "../modules/api/api";
 
 const userStore = useUser();
 
@@ -19,24 +20,30 @@ const credentials: Credentials = reactive({
   password: "",
 });
 const level = ref<AlertLevels>("danger");
-const formResult = ref("");
+const message = ref("");
 
 const emailValid = computed(() => validate(credentials.email, [isRequired]));
 const passwordValid = computed(() => validate(credentials.password, [isRequired]));
-const formInvalid = computed(() => !emailValid.value.valid || !passwordValid.value.valid);
+const formValid = computed(() => emailValid.value.valid || passwordValid.value.valid);
 
 /**
  * send login
  */
 async function handleSubmit() {
-  if (formInvalid.value) {
+  if (!formValid.value) {
     return;
   }
-  formResult.value = await userStore.login(credentials.email, credentials.password);
-
-  if (!formResult.value) {
-    level.value = "success";
-    formResult.value = "Connexion réussie, vous allez être redirigé";
+  // get user token
+  const resLogin = await api.user.login(credentials.email, credentials.password);
+  if (resLogin.valid && resLogin.payload) {
+    // save in store and get user infos
+    const resCurrentUser = await userStore.login(resLogin.payload);
+    message.value = resCurrentUser.message;
+    if (resCurrentUser.valid) {
+      level.value = "success";
+    }
+  } else {
+    message.value = resLogin.message;
   }
 }
 </script>
@@ -53,7 +60,7 @@ async function handleSubmit() {
       icon="fa-envelope"
     />
     <TextInput id="password" type="password" v-model="credentials.password" label="Mot de passe" :error="passwordValid.error" icon="fa-lock" />
-    <Alert :message="formResult" :level="level" v-if="formResult" />
+    <Alert :message="message" :level="level" v-if="message" />
     <Button type="submit" color="primary" label="Se connecter" />
   </form>
 </template>

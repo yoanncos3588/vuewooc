@@ -4,5 +4,6 @@ export type UrlParams = {
 
 export interface ApiResponseStatus {
   valid: boolean;
-  message?: string;
+  message: string;
+  payload?: any;
 }
