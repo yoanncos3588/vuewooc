@@ -21,6 +21,7 @@ const totalPages = ref<number>(1);
 const currentPage = ref<number>(1);
 const isLoading = ref(false);
 
+const showNavigation = computed(() => totalPages.value > 1);
 const queryParams = computed((): UrlParams => {
   const urlParams: UrlParams = {};
   if (category.value) {
@@ -70,9 +71,9 @@ function getSlug(newSlug: Array<string> | string): string {
     <div v-if="category !== undefined">
       <Title level="h2" size="2" :text="category.name" />
       <template v-if="!isLoading">
-        <Pagination :totalPages="totalPages" v-model:currentPage="currentPage" v-if="totalPages > 1" />
+        <Pagination :totalPages="totalPages" v-model:currentPage="currentPage" v-if="showNavigation" />
         <ProductsList :products="products" />
-        <Pagination :totalPages="totalPages" v-model:currentPage="currentPage" v-if="totalPages > 1" />
+        <Pagination :totalPages="totalPages" v-model:currentPage="currentPage" v-if="showNavigation" />
       </template>
       <template v-else> <Loading /> </template>
     </div>
