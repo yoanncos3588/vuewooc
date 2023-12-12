@@ -5,10 +5,12 @@ import user from "./user";
 import catalog from "./catalog";
 import axios, { AxiosRequestHeaders } from "axios";
 import { oauth } from "../../utils/oauth";
+import countries from "./countries";
 
 const api = {
   user,
   catalog,
+  countries,
 };
 
 export const axiosInstanceWoo = axios.create({

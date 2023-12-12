@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { getCountries } from "../utils/locations";
+// import { getCountries } from "../utils/locations";
 import { Countries } from "../types/locations";
+import api from "../modules/api/api";
 
 defineProps<{
   id: string;
@@ -13,13 +14,17 @@ const emit = defineEmits<{
   (event: "update:modelValue", value: string): void;
 }>();
 
-let countries = ref<Countries[] | undefined>(undefined);
+const countries = ref<Countries[] | undefined>(undefined);
 const firstFocus = ref(true);
+const errorApi = ref(false);
 
-onMounted(() => {
-  getCountries().then((result) => {
-    countries.value = result;
-  });
+onMounted(async () => {
+  const resCountries = await api.countries.get();
+  if (resCountries.valid && resCountries.payload) {
+    countries.value = resCountries.payload as Countries[];
+  } else {
+    errorApi.value = true;
+  }
 });
 
 function handleFocusOut() {
@@ -36,12 +41,13 @@ function handleSelect(e: Event) {
   <div class="field">
     <label :for="id" class="label">Pays</label>
     <div class="control">
-      <div class="select is-fullwidth" :class="{ 'is-loading': !countries, 'is-danger': error && !firstFocus }">
+      <div class="select is-fullwidth" :class="{ 'is-loading': !countries && !errorApi, 'is-danger': error && !firstFocus }">
         <select :id="id" @change="handleSelect" @focusout="handleFocusOut">
           <option selected disabled>Choisissez un pays</option>
-          <option v-for="country of countries" :value="country.code">
+          <option v-for="country of countries" :value="country.code" v-if="!errorApi">
             {{ country.name }}
           </option>
+          <option v-else value="FR">France</option>
         </select>
       </div>
     </div>
