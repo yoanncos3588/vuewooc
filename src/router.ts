@@ -39,7 +39,7 @@ export const router = createRouter({
       },
     },
     {
-      path: "/categorie/:slug+",
+      path: "/categorie/:slug+/:page?",
       component: Category,
     },
     {

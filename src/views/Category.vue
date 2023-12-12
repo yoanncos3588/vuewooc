@@ -2,7 +2,7 @@
 import Title from "../components/Title.vue";
 import { onBeforeRouteUpdate, useRoute, useRouter } from "vue-router";
 import { useCatalog } from "../store/catalog";
-import { computed, ref, watch, watchEffect } from "vue";
+import { computed, ref, watchEffect } from "vue";
 import { UrlParams } from "../types/apiParams";
 import { ProductCategorie } from "../types/categories";
 import ProductsList from "../components/ProductsList.vue";
@@ -69,9 +69,12 @@ function getSlug(newSlug: Array<string> | string): string {
   <section>
     <div v-if="category !== undefined">
       <Title level="h2" size="2" :text="category.name" />
-      <template v-if="!isLoading"><ProductsList :products="products" /></template>
+      <template v-if="!isLoading">
+        <Pagination :totalPages="totalPages" v-model:currentPage="currentPage" v-if="totalPages > 1" />
+        <ProductsList :products="products" />
+        <Pagination :totalPages="totalPages" v-model:currentPage="currentPage" v-if="totalPages > 1" />
+      </template>
       <template v-else> <Loading /> </template>
-      <Pagination :totalPages="totalPages" v-model:currentPage="currentPage" />
     </div>
   </section>
 </template>
