@@ -27,7 +27,7 @@ const description = computed(() => stripHTMLFromString(props.shortDescription));
         <div class="card-product__sale" v-show="onSale">
           <Tag color="danger" text="promo" />
         </div>
-        <figure class="image is-square">
+        <figure class="image is-square" v-if="images.length">
           <img :src="images[0].src" :alt="`Image du produit ${name}`" />
         </figure>
       </RouterLink>
