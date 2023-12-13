@@ -2,7 +2,7 @@
 import Title from "../components/Title.vue";
 import { onBeforeRouteUpdate, useRoute, useRouter } from "vue-router";
 import { useCatalog } from "../store/catalog";
-import { computed, ref, watchEffect } from "vue";
+import { computed, ref, toRaw, watch, watchEffect } from "vue";
 import { UrlParams } from "../types/apiParams";
 import { ProductCategorie } from "../types/categories";
 import ProductsList from "../components/ProductsList.vue";
@@ -22,6 +22,7 @@ const currentPage = ref<number>(1);
 const isLoading = ref(false);
 
 const showNavigation = computed(() => totalPages.value > 1);
+
 const queryParams = computed((): UrlParams => {
   const urlParams: UrlParams = {};
   if (category.value) {
@@ -33,9 +34,40 @@ const queryParams = computed((): UrlParams => {
   return urlParams;
 });
 
-/** triggered when updating route params */
-onBeforeRouteUpdate((to) => {
-  category.value = catalogStore.getCategoryBySlug(getSlug(to.params.slug));
+/** watch currentPage */
+watch(currentPage, () => {
+  // if current page change we add this location to the nav history
+  router.push({ name: "category", query: { page: currentPage.value } });
+});
+
+/** watch slug */
+watch(
+  () => route.params.slug,
+  (newSlug) => {
+    category.value = catalogStore.getCategoryBySlug(getSlug(newSlug));
+    if (!category.value) {
+      router.push("/404");
+    }
+  },
+  { immediate: true }
+);
+
+/** watch query page */
+watch(
+  () => route.query.page,
+  (newPage) => {
+    if (newPage === undefined || newPage === null) {
+      // add ?page=1 by default to any category page
+      router.replace({ name: "category", query: { page: 1 } });
+    } else {
+      // set current page value with the query url value
+      currentPage.value = Number(newPage);
+    }
+  },
+  { immediate: true }
+);
+
+watch(category, () => {
   if (!category.value) {
     router.push("/404");
   }
@@ -46,7 +78,6 @@ watchEffect(() => {
 });
 
 async function getProducts(queryParams: UrlParams = {}) {
-  console.log(queryParams);
   isLoading.value = true;
   const resProducts = await api.catalog.fetchProducts(queryParams);
   if (resProducts.valid && resProducts.payload) {

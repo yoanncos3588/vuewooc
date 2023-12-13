@@ -39,8 +39,9 @@ export const router = createRouter({
       },
     },
     {
-      path: "/categorie/:slug+/:page?",
+      path: "/categorie/:slug+/",
       component: Category,
+      name: "category",
     },
     {
       path: "/:catchAll(.*)",

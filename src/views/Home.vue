@@ -7,6 +7,7 @@ import CarouselFeatured from "../components/CarouselFeatured.vue";
 <template>
   <section>
     <Title level="h2" size="2" text="À la une" />
-    <CarouselFeatured />
+    hompeage
+    <!-- <CarouselFeatured /> -->
   </section>
 </template>
