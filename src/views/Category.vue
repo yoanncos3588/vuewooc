@@ -2,7 +2,7 @@
 import Title from "../components/Title.vue";
 import { onBeforeRouteUpdate, useRoute, useRouter } from "vue-router";
 import { useCatalog } from "../store/catalog";
-import { computed, ref, toRaw, watch, watchEffect } from "vue";
+import { computed, reactive, ref, toRaw, watch, watchEffect } from "vue";
 import { UrlParams } from "../types/apiParams";
 import { ProductCategorie } from "../types/categories";
 import ProductsList from "../components/ProductsList.vue";
@@ -22,16 +22,15 @@ const currentPage = ref<number>(1);
 const isLoading = ref(false);
 
 const showNavigation = computed(() => totalPages.value > 1);
-
-const queryParams = computed((): UrlParams => {
-  const urlParams: UrlParams = {};
+const fetchParams = computed((): UrlParams => {
+  const params: UrlParams = {};
   if (category.value) {
-    urlParams.category = category.value.id;
+    params.category = category.value.id;
   }
   if (currentPage.value > 1) {
-    urlParams.page = currentPage.value;
+    params.page = currentPage.value;
   }
-  return urlParams;
+  return params;
 });
 
 /** watch currentPage */
@@ -40,7 +39,7 @@ watch(currentPage, () => {
   router.push({ name: "category", query: { page: currentPage.value } });
 });
 
-/** watch slug */
+/** watch route slug */
 watch(
   () => route.params.slug,
   (newSlug) => {
@@ -52,7 +51,7 @@ watch(
   { immediate: true }
 );
 
-/** watch query page */
+/** watch route query page */
 watch(
   () => route.query.page,
   (newPage) => {
@@ -67,14 +66,8 @@ watch(
   { immediate: true }
 );
 
-watch(category, () => {
-  if (!category.value) {
-    router.push("/404");
-  }
-});
-
 watchEffect(() => {
-  getProducts(queryParams.value);
+  getProducts(fetchParams.value);
 });
 
 async function getProducts(queryParams: UrlParams = {}) {
