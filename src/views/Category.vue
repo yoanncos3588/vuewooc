@@ -35,7 +35,8 @@ const fetchParams = computed((): UrlParams => {
 
 /** watch currentPage */
 watch(currentPage, () => {
-  // if current page change we add this location to the nav history
+  // if current page change we add this location to the nav history,
+  // currentPage can change from navigation or url
   router.push({ name: "category", query: { page: currentPage.value } });
 });
 
@@ -54,13 +55,17 @@ watch(
 /** watch route query page */
 watch(
   () => route.query.page,
-  (newPage) => {
-    if (newPage === undefined || newPage === null) {
+  (urlValue) => {
+    if (urlValue === undefined || urlValue === null) {
       // add ?page=1 by default to any category page
       router.replace({ name: "category", query: { page: 1 } });
     } else {
-      // set current page value with the query url value
-      currentPage.value = Number(newPage);
+      if (Number(urlValue) > totalPages.value) {
+        router.push("/404");
+      } else {
+        // set current page value with the query url value
+        currentPage.value = Number(urlValue);
+      }
     }
   },
   { immediate: true }
@@ -95,9 +100,12 @@ function getSlug(newSlug: Array<string> | string): string {
     <div v-if="category !== undefined">
       <Title level="h2" size="2" :text="category.name" />
       <template v-if="!isLoading">
-        <Pagination :totalPages="totalPages" v-model:currentPage="currentPage" v-if="showNavigation" />
-        <ProductsList :products="products" />
-        <Pagination :totalPages="totalPages" v-model:currentPage="currentPage" v-if="showNavigation" />
+        <template v-if="products.length">
+          <Pagination :totalPages="totalPages" v-model:currentPage="currentPage" v-if="showNavigation" />
+          <ProductsList :products="products" />
+          <Pagination :totalPages="totalPages" v-model:currentPage="currentPage" v-if="showNavigation" />
+        </template>
+        <template v-else>Aucun produit trouvé</template>
       </template>
       <template v-else> <Loading /> </template>
     </div>
