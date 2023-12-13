@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import Title from "../components/Title.vue";
-import { onBeforeRouteUpdate, useRoute, useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useCatalog } from "../store/catalog";
-import { computed, reactive, ref, toRaw, watch, watchEffect } from "vue";
+import { computed, ref, watch, watchEffect } from "vue";
 import { UrlParams } from "../types/apiParams";
 import { ProductCategorie } from "../types/categories";
 import ProductsList from "../components/ProductsList.vue";
@@ -23,6 +23,8 @@ const isLoading = ref(false);
 
 const showNavigation = computed(() => totalPages.value > 1);
 const fetchParams = computed((): UrlParams => {
+  // api request parameters builder,
+  // this computed variable is watched to call api if something change
   const params: UrlParams = {};
   if (category.value) {
     params.category = category.value.id;
@@ -36,7 +38,7 @@ const fetchParams = computed((): UrlParams => {
 /** watch currentPage */
 watch(currentPage, () => {
   // if current page change we add this location to the nav history,
-  // currentPage can change from navigation or url
+  // currentPage can change from inter navigation or raw url modification
   router.push({ name: "category", query: { page: currentPage.value } });
 });
 
