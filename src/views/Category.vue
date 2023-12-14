@@ -10,6 +10,7 @@ import Loading from "../components/Loading.vue";
 import api from "../modules/api/api";
 import { Product } from "../types/products";
 import Pagination from "../components/Pagination.vue";
+import OrderBy, { orderByOptions } from "../components/OrderBy.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -20,6 +21,15 @@ const category = ref<ProductCategorie | undefined>(catalogStore.getCategoryBySlu
 const totalPages = ref<number>(1);
 const currentPage = ref<number>(1);
 const isLoading = ref(false);
+const orderBy = ref("date");
+
+const orderByCase: orderByOptions[] = [
+  { value: "date", label: "Date" },
+  { value: "title-asc", label: "Name (a - z)" },
+  { value: "title-desc", label: "Name (z - a)" },
+  { value: "price-asc", label: "Price (Increasing)" },
+  { value: "price-desc", label: "Price (Decreasing)" },
+];
 
 const showNavigation = computed(() => totalPages.value > 1);
 const fetchParams = computed((): UrlParams => {
@@ -31,6 +41,26 @@ const fetchParams = computed((): UrlParams => {
   }
   if (currentPage.value > 1) {
     params.page = currentPage.value;
+  }
+  switch (orderBy.value) {
+    case "title-asc":
+      params.orderby = "title";
+      params.order = "asc";
+      break;
+    case "title-desc":
+      params.orderby = "title";
+      params.order = "desc";
+      break;
+    case "price-asc":
+      params.orderby = "price";
+      params.order = "asc";
+      break;
+    case "price-desc":
+      params.orderby = "title";
+      params.order = "desc";
+      break;
+    default:
+      params.orderby = "date";
   }
   return params;
 });
@@ -103,6 +133,12 @@ function getSlug(newSlug: Array<string> | string): string {
       <Title level="h2" size="2" :text="category.name" />
       <template v-if="!isLoading">
         <template v-if="products.length">
+          <div class="columns">
+            <div class="column is-3">
+              <OrderBy v-model="orderBy" :orderByCase="orderByCase" />
+            </div>
+            <div class="column"></div>
+          </div>
           <Pagination :totalPages="totalPages" v-model:currentPage="currentPage" v-if="showNavigation" />
           <ProductsList :products="products" />
           <Pagination :totalPages="totalPages" v-model:currentPage="currentPage" v-if="showNavigation" />
