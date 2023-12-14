@@ -2,7 +2,7 @@
 import Title from "../components/Title.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useCatalog } from "../store/catalog";
-import { computed, ref, watch, watchEffect } from "vue";
+import { computed, reactive, ref, watch, watchEffect } from "vue";
 import { UrlParams } from "../types/apiParams";
 import { ProductCategorie } from "../types/categories";
 import ProductsList from "../components/ProductsList.vue";
@@ -11,6 +11,7 @@ import api from "../modules/api/api";
 import { Product } from "../types/products";
 import Pagination from "../components/Pagination.vue";
 import OrderBy, { orderByOptions } from "../components/OrderBy.vue";
+import Slider from "@vueform/slider";
 
 const route = useRoute();
 const router = useRouter();
@@ -22,13 +23,14 @@ const totalPages = ref<number>(1);
 const currentPage = ref<number>(1);
 const isLoading = ref(false);
 const orderBy = ref("date");
+const priceRange = ref([20, 40]);
 
 const orderByCase: orderByOptions[] = [
-  { value: "date", label: "Date" },
-  { value: "title-asc", label: "Name (a - z)" },
-  { value: "title-desc", label: "Name (z - a)" },
-  { value: "price-asc", label: "Price (Increasing)" },
-  { value: "price-desc", label: "Price (Decreasing)" },
+  { value: "date?order=asc", label: "Date" },
+  { value: "title?order=asc", label: "Name (a - z)" },
+  { value: "title?order=desc", label: "Name (z - a)" },
+  { value: "price?order=asc", label: "Price (Increasing)" },
+  { value: "price?order=desc", label: "Price (Decreasing)" },
 ];
 
 const showNavigation = computed(() => totalPages.value > 1);
@@ -42,25 +44,13 @@ const fetchParams = computed((): UrlParams => {
   if (currentPage.value > 1) {
     params.page = currentPage.value;
   }
-  switch (orderBy.value) {
-    case "title-asc":
-      params.orderby = "title";
-      params.order = "asc";
-      break;
-    case "title-desc":
-      params.orderby = "title";
-      params.order = "desc";
-      break;
-    case "price-asc":
-      params.orderby = "price";
-      params.order = "asc";
-      break;
-    case "price-desc":
-      params.orderby = "title";
-      params.order = "desc";
-      break;
-    default:
-      params.orderby = "date";
+  if (orderBy.value.includes("?order=asc")) {
+    params.order = "asc";
+    params.orderby = orderBy.value.replace("?order=asc", "");
+  }
+  if (orderBy.value.includes("?order=desc")) {
+    params.order = "desc";
+    params.orderby = orderBy.value.replace("?order=desc", "");
   }
   return params;
 });
@@ -133,11 +123,26 @@ function getSlug(newSlug: Array<string> | string): string {
       <Title level="h2" size="2" :text="category.name" />
       <template v-if="!isLoading">
         <template v-if="products.length">
-          <div class="columns">
-            <div class="column is-3">
+          <div class="columns mb-5">
+            <div class="column is-3-desktop">
               <OrderBy v-model="orderBy" :orderByCase="orderByCase" />
             </div>
-            <div class="column"></div>
+            <div class="column is-3-desktop is-offset-1-desktop">
+              <div class="category-filter__item category-filter__item--prices">
+                <label class="category-filter__label label">Price range</label>
+                <div>
+                  <Slider v-model="priceRange" tooltipPosition="bottom" />
+                </div>
+              </div>
+            </div>
+            <div class="column is-2-desktop is-offset-1-desktop">
+              <div class="category-filter is-flex is-align-items-center">
+                <div class="category-filter__item category-filter__item--sales">
+                  <p class="label">Filtrer</p>
+                  <label class="checkbox"> <input type="checkbox" /> Sales only </label>
+                </div>
+              </div>
+            </div>
           </div>
           <Pagination :totalPages="totalPages" v-model:currentPage="currentPage" v-if="showNavigation" />
           <ProductsList :products="products" />
@@ -149,3 +154,5 @@ function getSlug(newSlug: Array<string> | string): string {
     </div>
   </section>
 </template>
+
+<style src="@vueform/slider/themes/default.css"></style>
