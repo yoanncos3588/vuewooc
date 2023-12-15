@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import Title from "../components/Title.vue";
-import { useRoute, useRouter } from "vue-router";
+import { onBeforeRouteUpdate, useRoute, useRouter } from "vue-router";
 import { useCatalog } from "../store/catalog";
-import { computed, reactive, ref, watch, watchEffect } from "vue";
+import { computed, ref, watch } from "vue";
 import { UrlParams } from "../types/apiParams";
 import { ProductCategorie } from "../types/categories";
 import ProductsList from "../components/ProductsList.vue";
@@ -20,14 +20,9 @@ const catalogStore = useCatalog();
 const products = ref<Product[]>([]);
 const category = ref<ProductCategorie | undefined>(catalogStore.getCategoryBySlug(getSlug(route.params.slug)));
 const totalPages = ref<number>(1);
-const currentPage = ref<number>(1);
+const currentPage = ref<number>(route.query.page ? Number(route.query.page) : 1);
 const isLoading = ref(false);
-const orderBy = ref("date");
-const priceRange = ref([20, 40]);
-const onlySales = ref(false);
-const needToResetPagination = ref(false);
-
-watch(onlySales, () => (needToResetPagination.value = true));
+const orderBy = ref<string>(route.query.orderby ? String(route.query.orderby) : "date");
 
 const orderByCase: orderByOptions[] = [
   { value: "date?order=asc", label: "Date" },
@@ -38,86 +33,62 @@ const orderByCase: orderByOptions[] = [
 ];
 
 const showNavigation = computed(() => totalPages.value > 1);
-const fetchParams = computed((): UrlParams => {
-  // api request parameters builder,
-  // this computed variable is watched to call api if something change
-  const params: UrlParams = {};
-  if (category.value) {
-    params.category = category.value.id;
-  }
-  if (currentPage.value > 1) {
-    if (currentPage.value > 1 && onlySales.value && needToResetPagination.value) {
-      currentPage.value = 1;
-      needToResetPagination.value = false;
-      return {};
-    }
-    params.page = currentPage.value;
-  }
-  if (orderBy.value.includes("?order=asc")) {
-    params.order = "asc";
-    params.orderby = orderBy.value.replace("?order=asc", "");
-  }
-  if (orderBy.value.includes("?order=desc")) {
-    params.order = "desc";
-    params.orderby = orderBy.value.replace("?order=desc", "");
-  }
-  if (onlySales.value) {
-    params.on_sale = true;
-  }
-  return params;
+
+/** watch orderby */
+watch(orderBy, () => {
+  console.log("watch orderBy", orderBy.value);
+  const orderParams: UrlParams = {};
+  orderParams.order = orderBy.value.includes("?order=asc") ? "asc" : "desc";
+  orderParams.orderby = orderBy.value.includes("?order=asc") ? orderBy.value.replace("?order=asc", "") : orderBy.value.replace("?order=desc", "");
+  router.push({ name: "category", query: { ...route.query, orderby: orderParams.orderby, order: orderParams.order, page: 1 } });
 });
 
-/** watch currentPage */
-watch(currentPage, () => {
-  // if current page change we add this location to the nav history,
-  // currentPage can change from inter navigation or raw url modification
-  router.push({ name: "category", query: { page: currentPage.value } });
-});
-
-/** watch route slug */
+/** watch route slug (change category) */
 watch(
   () => route.params.slug,
-  (newSlug) => {
+  (newSlug, oldSlug) => {
+    if (newSlug.toString() === oldSlug?.toString()) {
+      // same slug, only query parameters changed do nothing
+      return;
+    }
     category.value = catalogStore.getCategoryBySlug(getSlug(newSlug));
-    if (!category.value) {
+  },
+  { immediate: true }
+);
+
+/** only triggered when route update not on create */
+onBeforeRouteUpdate((to, from, next) => {
+  if (to.path !== from.path) {
+    // if paths are different it's a new category so reset the current page number
+    currentPage.value = 1;
+  }
+  next();
+});
+
+/** watch route query (change filters and order) */
+watch(
+  () => route.query,
+  (nextQuery, prevQuery) => {
+    if (!Object.keys(nextQuery).length) {
+      // if the new query is empty, it's a new category or direct page load/refresh
+      // add the previous filters to the url and set page to 1, then return to trigger this watch again and fetch
+      router.replace({ name: "category", query: { ...prevQuery, page: 1 } });
+      return;
+    }
+    if (category.value) {
+      getProducts({ category: category.value.id, ...nextQuery });
+    } else {
       router.push("/404");
     }
   },
   { immediate: true }
 );
 
-/** watch route query page */
-watch(
-  () => route.query.page,
-  (urlValue) => {
-    if (urlValue === undefined || urlValue === null) {
-      // add ?page=1 by default to any category page
-      router.replace({ name: "category", query: { page: 1 } });
-    } else {
-      if (Number(urlValue) > totalPages.value) {
-        router.push("/404");
-      } else {
-        // set current page value with the query url value
-        currentPage.value = Number(urlValue);
-      }
-    }
-  },
-  { immediate: true }
-);
-
-watchEffect(() => {
-  getProducts(fetchParams.value);
-});
-
 /**
  * call api to get products
- * @param queryParams use empty queryParams object to prevent an api call (ex: need to reset page number when data is filtered)
+ * @param queryParams
  */
 async function getProducts(queryParams: UrlParams = {}) {
-  if (!Object.keys(queryParams).length) {
-    // usefull to cancel a query
-    return;
-  }
   isLoading.value = true;
   const resProducts = await api.catalog.fetchProducts(queryParams);
   if (resProducts.valid && resProducts.payload) {
@@ -149,7 +120,7 @@ function getSlug(newSlug: Array<string> | string): string {
           <div class="category-filter__item category-filter__item--prices">
             <label class="category-filter__label label">Price range</label>
             <div>
-              <Slider v-model="priceRange" tooltipPosition="bottom" />
+              <!-- <Slider v-model="priceRange" tooltipPosition="bottom" /> -->
             </div>
           </div>
         </div>
@@ -157,16 +128,16 @@ function getSlug(newSlug: Array<string> | string): string {
           <div class="category-filter is-flex is-align-items-center">
             <div class="category-filter__item category-filter__item--sales">
               <p class="label">Filtrer</p>
-              <label class="checkbox"> <input type="checkbox" :value="onlySales" v-model="onlySales" /> Sales only </label>
+              <!-- <label class="checkbox"> <input type="checkbox" :value="onlySales" v-model="onlySales" /> Sales only </label> -->
             </div>
           </div>
         </div>
       </div>
       <template v-if="!isLoading">
         <template v-if="products.length">
-          <Pagination :totalPages="totalPages" v-model:currentPage="currentPage" v-if="showNavigation" />
+          <Pagination :totalPages="totalPages" v-model:currentPage="currentPage" v-if="showNavigation" :addToUrl="true" />
           <ProductsList :products="products" />
-          <Pagination :totalPages="totalPages" v-model:currentPage="currentPage" v-if="showNavigation" />
+          <Pagination :totalPages="totalPages" v-model:currentPage="currentPage" v-if="showNavigation" :addToUrl="true" />
         </template>
         <template v-else>Aucun produit trouvé</template>
       </template>
