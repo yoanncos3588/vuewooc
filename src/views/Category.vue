@@ -36,10 +36,10 @@ const showNavigation = computed(() => totalPages.value > 1);
 
 /** watch orderby */
 watch(orderBy, () => {
-  console.log("watch orderBy", orderBy.value);
   const orderParams: UrlParams = {};
   orderParams.order = orderBy.value.includes("?order=asc") ? "asc" : "desc";
   orderParams.orderby = orderBy.value.includes("?order=asc") ? orderBy.value.replace("?order=asc", "") : orderBy.value.replace("?order=desc", "");
+  currentPage.value = 1;
   router.push({ name: "category", query: { ...route.query, orderby: orderParams.orderby, order: orderParams.order, page: 1 } });
 });
 

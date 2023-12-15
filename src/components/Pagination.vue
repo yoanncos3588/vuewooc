@@ -43,14 +43,15 @@ function isCurrentPage(index: number): boolean {
     >
     <ul class="pagination-list">
       <li v-for="index in totalPages">
-        <a
+        <component
+          :is="htmlTag"
           class="pagination-link"
           :class="isCurrentPage(index) ? 'is-current' : ''"
           :aria-label="`Page ${index}`"
           :aria-current="isCurrentPage(index) ? 'page' : undefined"
           @click="emit('update:currentPage', index)"
           :to="{ name: 'category', query: { ...route.query, page: index } }"
-          >{{ index }}</a
+          >{{ index }}</component
         >
       </li>
     </ul>
