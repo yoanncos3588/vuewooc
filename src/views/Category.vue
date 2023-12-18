@@ -20,6 +20,7 @@ const orderByDefault = "date?order=asc";
 
 const category = ref<ProductCategorie | undefined>(catalogStore.getCategoryBySlug(getSlug(route.params.slug)));
 const totalPages = ref<number>(1);
+const totalProducts = ref<number>(0);
 const currentPage = ref<number>(route.query.page ? Number(route.query.page) : 1);
 const isLoading = ref(false);
 const orderBy = ref<string>(route.query.orderby ? `${route.query.orderby}?order=${route.query.order}` : orderByDefault);
@@ -107,6 +108,7 @@ async function getProducts(queryParams: UrlParams = {}) {
   isLoading.value = true;
   const resProducts = await catalogStore.getProducts(queryParams);
   totalPages.value = resProducts.totalPages;
+  totalProducts.value = resProducts.totalProducts;
   isLoading.value = false;
 }
 
@@ -155,6 +157,10 @@ function getSlug(newSlug: Array<string> | string): string {
             </div>
           </div>
         </div>
+      </div>
+      <div class="mb-5">
+        <hr />
+        <p class="is-size-7 has-text-grey-light">{{ totalProducts }} products found</p>
       </div>
       <template v-if="!isLoading">
         <Pagination :totalPages="totalPages" v-model:currentPage="currentPage" v-if="showNavigation" :addToUrl="true" />
