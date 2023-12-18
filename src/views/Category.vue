@@ -23,6 +23,7 @@ const totalPages = ref<number>(1);
 const currentPage = ref<number>(route.query.page ? Number(route.query.page) : 1);
 const isLoading = ref(false);
 const orderBy = ref<string>(route.query.orderby ? String(route.query.orderby) : "date");
+const onlySales = ref(route.query.on_sale ? route.query.on_sale : false);
 
 const orderByCase: orderByOptions[] = [
   { value: "date?order=asc", label: "Date" },
@@ -41,6 +42,16 @@ watch(orderBy, () => {
   orderParams.orderby = orderBy.value.includes("?order=asc") ? orderBy.value.replace("?order=asc", "") : orderBy.value.replace("?order=desc", "");
   currentPage.value = 1;
   router.push({ name: "category", query: { ...route.query, orderby: orderParams.orderby, order: orderParams.order, page: 1 } });
+});
+
+/** watch on sale filter */
+watch(onlySales, () => {
+  if (onlySales.value) {
+    router.push({ name: "category", query: { ...route.query, on_sale: String(onlySales.value), page: 1 } });
+  } else {
+    const { on_sale, ...oldQuery } = route.query;
+    router.push({ name: "category", query: { ...oldQuery, page: 1 } });
+  }
 });
 
 /** watch route slug (change category) */
@@ -128,7 +139,7 @@ function getSlug(newSlug: Array<string> | string): string {
           <div class="category-filter is-flex is-align-items-center">
             <div class="category-filter__item category-filter__item--sales">
               <p class="label">Filtrer</p>
-              <!-- <label class="checkbox"> <input type="checkbox" :value="onlySales" v-model="onlySales" /> Sales only </label> -->
+              <label class="checkbox"> <input type="checkbox" :value="onlySales" v-model="onlySales" /> Sales only </label>
             </div>
           </div>
         </div>
