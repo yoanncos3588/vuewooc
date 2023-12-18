@@ -24,6 +24,11 @@ const currentPage = ref<number>(route.query.page ? Number(route.query.page) : 1)
 const isLoading = ref(false);
 const orderBy = ref<string>(route.query.orderby ? String(route.query.orderby) : "date");
 const onlySales = ref(route.query.on_sale ? route.query.on_sale : false);
+const maxPrice = 100;
+const priceRange = ref<Array<number>>([
+  route.query.min_price ? Number(route.query.min_price) : 0,
+  route.query.max_price ? Number(route.query.max_price) : maxPrice,
+]);
 
 const orderByCase: orderByOptions[] = [
   { value: "date?order=asc", label: "Date" },
@@ -34,6 +39,14 @@ const orderByCase: orderByOptions[] = [
 ];
 
 const showNavigation = computed(() => totalPages.value > 1);
+
+/** watch price range */
+watch(priceRange, () => {
+  const min = Number(priceRange.value[0]);
+  const max = Number(priceRange.value[1]);
+  const queryPriceRange = { min_price: min, max_price: max };
+  router.push({ name: "category", query: { ...route.query, ...queryPriceRange, page: 1 } });
+});
 
 /** watch orderby */
 watch(orderBy, () => {
@@ -131,7 +144,7 @@ function getSlug(newSlug: Array<string> | string): string {
           <div class="category-filter__item category-filter__item--prices">
             <label class="category-filter__label label">Price range</label>
             <div>
-              <!-- <Slider v-model="priceRange" tooltipPosition="bottom" /> -->
+              <Slider v-model="priceRange" tooltipPosition="bottom" :max="maxPrice" />
             </div>
           </div>
         </div>
