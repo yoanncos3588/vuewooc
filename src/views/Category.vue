@@ -160,7 +160,7 @@ function getSlug(newSlug: Array<string> | string): string {
       </div>
       <div class="mb-5">
         <hr />
-        <p class="is-size-7 has-text-grey-light">{{ totalProducts }} products found</p>
+        <p class="is-size-7 has-text-grey-light">{{ totalProducts }} product(s) found</p>
       </div>
       <template v-if="!isLoading">
         <Pagination :totalPages="totalPages" v-model:currentPage="currentPage" v-if="showNavigation" :addToUrl="true" />
