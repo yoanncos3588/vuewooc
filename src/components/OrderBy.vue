@@ -24,6 +24,6 @@ watch(propsModelValue, () => {
 
 <template>
   <Select id="orderBy" label="Order By" v-model="propsModelValue" :required="true">
-    <option v-for="option in orderByCase" :value="option.value" :selected="option.value === modelValue">{{ option.label }}</option>
+    <option v-for="(option, index) in orderByCase" :value="option.value" :selected="option.value === modelValue" :key="index">{{ option.label }}</option>
   </Select>
 </template>

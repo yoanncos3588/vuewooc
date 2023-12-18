@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Title from "../components/Title.vue";
-import { onBeforeRouteUpdate, useRoute, useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useCatalog } from "../store/catalog";
 import { computed, ref, watch } from "vue";
 import { UrlParams } from "../types/apiParams";
@@ -15,20 +15,22 @@ const route = useRoute();
 const router = useRouter();
 const catalogStore = useCatalog();
 
+const maxPriceDefault = 100;
+const orderByDefault = "date?order=asc";
+
 const category = ref<ProductCategorie | undefined>(catalogStore.getCategoryBySlug(getSlug(route.params.slug)));
 const totalPages = ref<number>(1);
 const currentPage = ref<number>(route.query.page ? Number(route.query.page) : 1);
 const isLoading = ref(false);
-const orderBy = ref<string>(route.query.orderby ? String(route.query.orderby) : "date");
+const orderBy = ref<string>(route.query.orderby ? `${route.query.orderby}?order=${route.query.order}` : orderByDefault);
 const onlySales = ref(route.query.on_sale ? route.query.on_sale : false);
-const maxPrice = 100;
 const priceRange = ref<Array<number>>([
   route.query.min_price ? Number(route.query.min_price) : 0,
-  route.query.max_price ? Number(route.query.max_price) : maxPrice,
+  route.query.max_price ? Number(route.query.max_price) : maxPriceDefault,
 ]);
 
 const orderByCase: orderByOptions[] = [
-  { value: "date?order=asc", label: "Date" },
+  { value: orderByDefault, label: "Date" },
   { value: "title?order=asc", label: "Name (a - z)" },
   { value: "title?order=desc", label: "Name (z - a)" },
   { value: "price?order=asc", label: "Price (Increasing)" },
@@ -47,11 +49,11 @@ watch(priceRange, () => {
 
 /** watch orderby */
 watch(orderBy, () => {
-  const orderParams: UrlParams = {};
-  orderParams.order = orderBy.value.includes("?order=asc") ? "asc" : "desc";
-  orderParams.orderby = orderBy.value.includes("?order=asc") ? orderBy.value.replace("?order=asc", "") : orderBy.value.replace("?order=desc", "");
-  currentPage.value = 1;
-  router.push({ name: "category", query: { ...route.query, orderby: orderParams.orderby, order: orderParams.order, page: 1 } });
+  const params: UrlParams = {};
+  params.order = orderBy.value.includes("?order=asc") ? "asc" : "desc";
+  params.orderby = orderBy.value.includes("?order=asc") ? orderBy.value.replace("?order=asc", "") : orderBy.value.replace("?order=desc", "");
+
+  router.push({ name: "category", query: { ...route.query, orderby: params.orderby, order: params.order, page: 1 } });
 });
 
 /** watch on sale filter */
@@ -77,15 +79,6 @@ watch(
   { immediate: true }
 );
 
-/** only triggered when route update not on create */
-onBeforeRouteUpdate((to, from, next) => {
-  if (to.path !== from.path) {
-    // if paths are different it's a new category so reset the current page number
-    currentPage.value = 1;
-  }
-  next();
-});
-
 /** watch route query (change filters and order) */
 watch(
   () => route.query,
@@ -96,6 +89,7 @@ watch(
       router.replace({ name: "category", query: { ...prevQuery, page: 1 } });
       return;
     }
+    syncStateWithQuery();
     if (category.value) {
       getProducts({ category: category.value.id, ...nextQuery });
     } else {
@@ -114,6 +108,17 @@ async function getProducts(queryParams: UrlParams = {}) {
   const resProducts = await catalogStore.getProducts(queryParams);
   totalPages.value = resProducts.totalPages;
   isLoading.value = false;
+}
+
+/**
+ * keep url paramaters and state sync (mostly for back navigation cases)
+ */
+function syncStateWithQuery() {
+  route.query.page ? (currentPage.value = Number(route.query.page)) : 1;
+  route.query.orderby ? (orderBy.value = `${route.query.orderby}?order=${route.query.order}`) : (orderBy.value = orderByDefault);
+  route.query.min_price ? (priceRange.value[0] = Number(route.query.min_price)) : (priceRange.value[0] = 0);
+  route.query.max_price ? (priceRange.value[1] = Number(route.query.max_price)) : (priceRange.value[1] = maxPriceDefault);
+  route.query.on_sale ? (onlySales.value = Boolean(route.query.on_sale)) : (onlySales.value = false);
 }
 
 /**
@@ -138,7 +143,7 @@ function getSlug(newSlug: Array<string> | string): string {
           <div class="category-filter__item category-filter__item--prices">
             <label class="category-filter__label label">Price range</label>
             <div>
-              <Slider v-model="priceRange" tooltipPosition="bottom" :max="maxPrice" />
+              <Slider v-model="priceRange" tooltipPosition="bottom" :max="maxPriceDefault" />
             </div>
           </div>
         </div>
