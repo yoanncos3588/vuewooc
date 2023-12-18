@@ -7,14 +7,12 @@ import { toRaw } from "vue";
 import api from "../modules/api/api";
 
 export interface catalogState {
-  productsIds: number[]; // use for easy use of maps and filter (keep up to date!)
   categories: Map<number, ProductCategorie>;
   products: Map<number, Product>;
 }
 
 export const useCatalog = defineStore("catalog", {
   state: (): catalogState => ({
-    productsIds: [],
     categories: new Map(),
     products: new Map(),
   }),
@@ -42,15 +40,19 @@ export const useCatalog = defineStore("catalog", {
      * Get products and save them in pinia store
      * @param params @type {UrlParams} : obj listing all parameters use to construct url parameters for filtering
      */
-    async getProducts(params?: UrlParams) {
+    async getProducts(params?: UrlParams): Promise<{ valid: boolean; totalPages: number; totalProducts: number }> {
       const resProducts = await api.catalog.fetchProducts(params);
 
       if (resProducts.valid && resProducts.payload) {
-        for (const product of resProducts.payload) {
-          this.products.set(product.id, camelCase(product) as Product);
+        this.products.clear();
+        const { products } = resProducts.payload;
+        for (const product of products) {
+          this.products.set(product.id, product);
         }
+        return { valid: resProducts.valid, totalPages: resProducts.payload.totalPages, totalProducts: resProducts.payload.totalProducts };
       } else {
         console.log("fetchProducts : " + resProducts.message);
+        return { valid: resProducts.valid, totalPages: 0, totalProducts: 0 };
       }
     },
 

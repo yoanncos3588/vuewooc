@@ -7,8 +7,6 @@ import { UrlParams } from "../types/apiParams";
 import { ProductCategorie } from "../types/categories";
 import ProductsList from "../components/ProductsList.vue";
 import Loading from "../components/Loading.vue";
-import api from "../modules/api/api";
-import { Product } from "../types/products";
 import Pagination from "../components/Pagination.vue";
 import OrderBy, { orderByOptions } from "../components/OrderBy.vue";
 import Slider from "@vueform/slider";
@@ -17,7 +15,6 @@ const route = useRoute();
 const router = useRouter();
 const catalogStore = useCatalog();
 
-const products = ref<Product[]>([]);
 const category = ref<ProductCategorie | undefined>(catalogStore.getCategoryBySlug(getSlug(route.params.slug)));
 const totalPages = ref<number>(1);
 const currentPage = ref<number>(route.query.page ? Number(route.query.page) : 1);
@@ -114,11 +111,8 @@ watch(
  */
 async function getProducts(queryParams: UrlParams = {}) {
   isLoading.value = true;
-  const resProducts = await api.catalog.fetchProducts(queryParams);
-  if (resProducts.valid && resProducts.payload) {
-    products.value = resProducts.payload.products as Product[];
-    totalPages.value = Number(resProducts.payload.totalPages);
-  }
+  const resProducts = await catalogStore.getProducts(queryParams);
+  totalPages.value = resProducts.totalPages;
   isLoading.value = false;
 }
 
@@ -158,12 +152,9 @@ function getSlug(newSlug: Array<string> | string): string {
         </div>
       </div>
       <template v-if="!isLoading">
-        <template v-if="products.length">
-          <Pagination :totalPages="totalPages" v-model:currentPage="currentPage" v-if="showNavigation" :addToUrl="true" />
-          <ProductsList :products="products" />
-          <Pagination :totalPages="totalPages" v-model:currentPage="currentPage" v-if="showNavigation" :addToUrl="true" />
-        </template>
-        <template v-else>Aucun produit trouvé</template>
+        <Pagination :totalPages="totalPages" v-model:currentPage="currentPage" v-if="showNavigation" :addToUrl="true" />
+        <ProductsList />
+        <Pagination :totalPages="totalPages" v-model:currentPage="currentPage" v-if="showNavigation" :addToUrl="true" />
       </template>
       <template v-else> <Loading /> </template>
     </div>

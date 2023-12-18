@@ -1,15 +1,13 @@
 <script setup lang="ts">
-import { Product } from "../types/products";
+import { useCatalog } from "../store/catalog";
 import CardProduct from "./CardProduct.vue";
 
-defineProps<{
-  products: Array<Product>;
-}>();
+const catalogStore = useCatalog();
 </script>
 
 <template>
-  <ul class="columns is-multiline">
-    <li v-for="product in products" class="column is-4-tablet is-3-desktop">
+  <ul class="columns is-multiline" v-if="catalogStore.products.size > 0">
+    <li v-for="[key, product] in catalogStore.products" class="column is-4-tablet is-3-desktop" :key="key">
       <CardProduct
         :id="product.id"
         :name="product.name"
@@ -22,4 +20,5 @@ defineProps<{
       />
     </li>
   </ul>
+  <p v-else>Aucun produit trouvé</p>
 </template>

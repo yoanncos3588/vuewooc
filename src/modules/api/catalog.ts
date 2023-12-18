@@ -3,6 +3,12 @@ import { Product } from "../../types/products";
 import { axiosInstanceWoo, setApiResponseStatus } from "./api";
 import { camelCase } from "change-case/keys";
 
+type PayloadFetchProducts = {
+  products: Product[];
+  totalPages: number;
+  totalProducts: number;
+};
+
 const catalog = {
   /**
    * Fetch products categories
@@ -22,18 +28,17 @@ const catalog = {
    * Fetch products from api, with possibles filters
    * @param params @type {UrlParams} : obj listing all parameters use to construct url parameters for filtering
    */
-  fetchProducts: async (params?: UrlParams) => {
+  fetchProducts: async (params?: UrlParams): Promise<ApiResponseStatus<PayloadFetchProducts>> => {
     try {
-      // const { data: dataProducts }: { data: Product[] } = await axiosInstanceWoo.get("/products", { params: params });
       const res = await axiosInstanceWoo.get("/products", { params: params });
 
       const productsRaw = res.data;
       const products: Product[] = productsRaw.map((product: any) => camelCase(product, 2));
 
-      const totalPages = res.headers["x-wp-totalpages"] as string;
-      const totalProducts = res.headers["x-wp-total"] as string;
+      const totalPages = Number(res.headers["x-wp-totalpages"]);
+      const totalProducts = Number(res.headers["x-wp-total"]);
 
-      const payload = { products, totalPages, totalProducts };
+      const payload: PayloadFetchProducts = { products, totalPages, totalProducts };
 
       return setApiResponseStatus(true, "success", payload);
     } catch (error) {
