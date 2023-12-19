@@ -1,4 +1,5 @@
 .card-product {
+  height: 100%;
   &__title,
   &__description {
     position: relative;
@@ -12,8 +13,7 @@
     -webkit-line-clamp: 2;
   }
   &__description {
-    line-clamp: 3;
-    -webkit-line-clamp: 3;
+    min-height: 48px;
   }
   &__sale {
     position: absolute;

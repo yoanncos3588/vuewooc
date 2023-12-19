@@ -2,11 +2,10 @@
 defineProps<{
   price: string;
   salePrice?: string;
-  onSale: boolean;
 }>();
 </script>
 <template>
-  <template v-if="onSale">
+  <template v-if="salePrice">
     <span>
       <b> {{ salePrice }} € </b>
     </span>

@@ -43,6 +43,11 @@ export const router = createRouter({
       component: Category,
       name: "category",
     },
+    // {
+    //   path: "/products/:slug/:id/",
+    //   component: Product,
+    //   name: "product",
+    // },
     {
       path: "/:catchAll(.*)",
       component: NotFound,

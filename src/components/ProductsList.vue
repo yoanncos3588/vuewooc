@@ -8,16 +8,7 @@ const catalogStore = useCatalog();
 <template>
   <ul class="columns is-multiline" v-if="catalogStore.products.size > 0">
     <li v-for="[key, product] in catalogStore.products" class="column is-4-tablet is-3-desktop" :key="key">
-      <CardProduct
-        :id="product.id"
-        :name="product.name"
-        :slug="product.slug"
-        :shortDescription="product.description"
-        :price="product.regularPrice"
-        :onSale="product.onSale"
-        :images="product.images"
-        :salePrice="product.salePrice"
-      />
+      <CardProduct :id="product.id" />
     </li>
   </ul>
   <p v-else>Aucun produit trouvé</p>
