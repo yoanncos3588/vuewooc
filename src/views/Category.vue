@@ -94,7 +94,8 @@ watch(
     if (category.value) {
       getProducts({ category: category.value.id, ...nextQuery });
     } else {
-      router.push("/404");
+      console.log("go 404");
+      // router.push("/404");
     }
   },
   { immediate: true }
