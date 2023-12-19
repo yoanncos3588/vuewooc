@@ -27,9 +27,6 @@ const hasVariations = computed(() => Boolean(product?.variations.length));
         <div class="card-product__sale" v-show="product.onSale">
           <Tag color="danger" text="promo" />
         </div>
-        <!-- <figure class="image is-square" v-if="product.images.length">
-          <img :src="product.images[0].src" :alt="`Image of ${product.name}`" />
-        </figure> -->
         <ProductImage :images="product.images" />
       </RouterLink>
     </div>
