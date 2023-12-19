@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { ref } from "vue";
 import Icon from "./Icon.vue";
 
 const props = defineProps<{
-  modelValue: string;
+  modelValue: string | number;
   type: string;
   label: string;
   id: string;
@@ -13,14 +13,18 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (event: "update:modelValue", value: string): void;
+  (event: "update:modelValue", value: string | number): void;
 }>();
 
 const firstFocus = ref(true);
 
 function handleInput(e: Event) {
   const value = (e.target as HTMLInputElement).value;
-  emit("update:modelValue", value);
+  if (props.type === "number") {
+    emit("update:modelValue", Number(value));
+  } else {
+    emit("update:modelValue", value);
+  }
 }
 
 function handleFocusOut() {
