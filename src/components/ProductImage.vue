@@ -7,7 +7,6 @@ const props = defineProps<{
 }>();
 
 const iterator = ref(0);
-
 let hoverInterval: number | undefined = undefined;
 
 /**
@@ -30,7 +29,7 @@ function handleMouseLeave() {
 </script>
 
 <template>
-  <figure class="image is-square" v-if="images.length" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave">
+  <figure class="image is-square" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave">
     <img
       :src="image.src"
       :alt="image.alt"
@@ -38,6 +37,8 @@ function handleMouseLeave() {
       :key="index"
       style="opacity: 0"
       :style="iterator === index ? { opacity: 1 } : { opacity: 0 }"
+      v-if="images.length"
     />
+    <img v-else src="/public/placeholder.png" />
   </figure>
 </template>
