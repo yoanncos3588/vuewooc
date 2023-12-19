@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import { ProductImages } from "../types/products";
 import ProductPrice from "./ProductPrice.vue";
 import Title from "./Title.vue";
 import Tag from "./Tag.vue";
+import ProductImage from "./ProductImage.vue";
 import TextClamp from "vue3-text-clamp";
 import { stripHTMLFromString } from "../utils/formatText";
 import { useCatalog } from "../store/catalog";
@@ -27,9 +27,10 @@ const hasVariations = computed(() => Boolean(product?.variations.length));
         <div class="card-product__sale" v-show="product.onSale">
           <Tag color="danger" text="promo" />
         </div>
-        <figure class="image is-square" v-if="product.images.length">
+        <!-- <figure class="image is-square" v-if="product.images.length">
           <img :src="product.images[0].src" :alt="`Image of ${product.name}`" />
-        </figure>
+        </figure> -->
+        <ProductImage :images="product.images" />
       </RouterLink>
     </div>
     <div class="card-content card-product__content">
