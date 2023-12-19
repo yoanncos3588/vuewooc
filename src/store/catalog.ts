@@ -64,7 +64,7 @@ export const useCatalog = defineStore("catalog", {
       const resProducts = await api.catalog.fetchProductById(productId);
 
       if (resProducts.valid && resProducts.payload) {
-        this.products.set(resProducts.payload.id, camelCase(resProducts.payload) as Product);
+        this.products.set(resProducts.payload.id, resProducts.payload);
       } else {
         console.log("fetchProductById" + resProducts.message);
       }

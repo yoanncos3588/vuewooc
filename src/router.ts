@@ -3,9 +3,9 @@ import Home from "./views/Home.vue";
 import Signup from "./views/Signup.vue";
 import Signin from "./views/Signin.vue";
 import Category from "./views/Category.vue";
+import Product from "./views/Product.vue";
 import NotFound from "./views/NotFound.vue";
 import { useUser } from "./store/user";
-import { useCatalog } from "./store/catalog";
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -43,11 +43,11 @@ export const router = createRouter({
       component: Category,
       name: "category",
     },
-    // {
-    //   path: "/products/:slug/:id/",
-    //   component: Product,
-    //   name: "product",
-    // },
+    {
+      path: "/product/:slug/:id/",
+      component: Product,
+      name: "product",
+    },
     {
       path: "/:catchAll(.*)",
       component: NotFound,

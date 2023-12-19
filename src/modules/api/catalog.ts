@@ -10,10 +10,6 @@ type PayloadFetchProducts = {
   totalProducts: number;
 };
 
-type PayloadFetchCategories = {
-  categories: ProductCategorie[];
-};
-
 const catalog = {
   /**
    * Fetch products categories
@@ -63,10 +59,10 @@ const catalog = {
    * Fetch products from api by id
    * @param productId @type {number} : product id to fetch
    */
-  fetchProductById: async (productId: number) => {
+  fetchProductById: async (productId: number): Promise<ApiResponseStatus<Product>> => {
     try {
       const { data: dataProduct }: { data: Product } = await axiosInstanceWoo.get(`/products/${productId}`);
-      return setApiResponseStatus(true, "success", dataProduct);
+      return setApiResponseStatus(true, "success", camelCase(dataProduct));
     } catch (error) {
       return setApiResponseStatus(false, error);
     }
