@@ -17,7 +17,6 @@ const storeCatalog = useCatalog();
 const product = storeCatalog.products.get(props.id);
 
 const description = computed(() => (product && product.shortDescription ? stripHTMLFromString(product.shortDescription) : ""));
-const hasVariations = computed(() => Boolean(product?.variations.length));
 </script>
 
 <template>
@@ -40,7 +39,8 @@ const hasVariations = computed(() => Boolean(product?.variations.length));
         <TextClamp :max-lines="2" :text="description"></TextClamp>
       </p>
       <div class="my-2 card-product__price">
-        <ProductPrice :price="!hasVariations ? product.regularPrice : product.price" :salePrice="product.onSale ? product.salePrice : undefined" />
+        <!-- <ProductPrice :id=id :price="!hasVariations ? product.regularPrice : product.price" :salePrice="product.onSale ? product.salePrice : undefined" /> -->
+        <ProductPrice :productId="id" />
       </div>
     </div>
   </article>
