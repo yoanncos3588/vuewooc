@@ -79,6 +79,7 @@ export const useCatalog = defineStore("catalog", {
     getCategoryBySlug: (state) => {
       return (slug: string) => {
         let results;
+        console.log("go");
         state.categories.forEach((category) => {
           if (category.slug === slug) {
             results = category;
