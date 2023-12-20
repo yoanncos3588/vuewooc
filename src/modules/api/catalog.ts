@@ -1,6 +1,6 @@
 import { ApiResponseStatus, UrlParams } from "../../types/apiParams";
 import { ProductCategorie } from "../../types/categories";
-import { Product } from "../../types/products";
+import { Product, ProductVariation } from "../../types/products";
 import { axiosInstanceWoo, setApiResponseStatus } from "./api";
 import { camelCase } from "change-case/keys";
 
@@ -62,6 +62,18 @@ const catalog = {
   fetchProductById: async (productId: number): Promise<ApiResponseStatus<Product>> => {
     try {
       const { data: dataProduct }: { data: Product } = await axiosInstanceWoo.get(`/products/${productId}`);
+      return setApiResponseStatus(true, "success", camelCase(dataProduct));
+    } catch (error) {
+      return setApiResponseStatus(false, error);
+    }
+  },
+  /**
+   * Fetch products from api by id
+   * @param productId @type {number} : product id to fetch
+   */
+  fetchProductVariationById: async (productId: number, productVariationId: number): Promise<ApiResponseStatus<ProductVariation>> => {
+    try {
+      const { data: dataProduct }: { data: ProductVariation } = await axiosInstanceWoo.get(`/products/${productId}/variations/${productVariationId}`);
       return setApiResponseStatus(true, "success", camelCase(dataProduct));
     } catch (error) {
       return setApiResponseStatus(false, error);

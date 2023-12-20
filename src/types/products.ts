@@ -62,3 +62,11 @@ export interface ProductAttributes {
   variation: boolean;
   options: Array<string>;
 }
+
+export interface ProductVariation
+  extends Omit<
+    Product,
+    "type" | "featured" | "catalogVisibility" | "shortDescription" | "totalSales" | "relatedIds" | "categories" | "tags" | "images" | "variations"
+  > {
+  image: ProductImages;
+}
