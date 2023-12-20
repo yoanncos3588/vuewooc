@@ -63,10 +63,27 @@ export interface ProductAttributes {
   options: Array<string>;
 }
 
+export interface VariationAttributes {
+  id: number;
+  name: string;
+  option: string;
+}
+
 export interface ProductVariation
   extends Omit<
     Product,
-    "type" | "featured" | "catalogVisibility" | "shortDescription" | "totalSales" | "relatedIds" | "categories" | "tags" | "images" | "variations"
+    | "attributes"
+    | "type"
+    | "featured"
+    | "catalogVisibility"
+    | "shortDescription"
+    | "totalSales"
+    | "relatedIds"
+    | "categories"
+    | "tags"
+    | "images"
+    | "variations"
   > {
   image: ProductImages;
+  attributes: VariationAttributes[];
 }

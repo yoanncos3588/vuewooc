@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, ref, watch } from "vue";
+import { computed, reactive, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useCatalog } from "../store/catalog";
 import Loading from "../components/Loading.vue";
@@ -20,7 +20,7 @@ const catalogStore = useCatalog();
 const selectedVariation = ref<ProductVariation | undefined>(undefined);
 const quantity = ref(1);
 const loading = ref(false);
-// const selectedAttributes = ref([{ id, value }]);
+const selectedAttributes = reactive<{ [key: string]: string }>({});
 
 const product = computed(() => catalogStore.products.get(Number(route.params.id)));
 const description = computed(() => (product.value?.description ? DOMPurify.sanitize(product.value?.description) : ""));
@@ -34,14 +34,24 @@ watch(
     loading.value = true;
     const id = Number(route.params.id);
     if (!catalogStore.products.get(id)) {
+      // product was not loaded in store
       await catalogStore.getProductById(id);
       if (!catalogStore.products.get(id)) {
         router.push("/404");
       }
     }
     if (product.value && product.value.variations.length > 0) {
+      // product is variable, fetch the first variation to have an active product in the page
       const resVariation = await api.catalog.fetchProductVariationById(product.value.id, product.value.variations[0]);
-      selectedVariation.value = resVariation.payload;
+      if (resVariation.valid && resVariation.payload) {
+        selectedVariation.value = resVariation.payload;
+        // clear old attributes
+        Object.keys(selectedAttributes).forEach((key) => delete selectedAttributes[key]);
+        for (const attribute of selectedVariation.value.attributes) {
+          // set default value from the variation fetched
+          selectedAttributes[attribute.id] = attribute.option;
+        }
+      }
     }
     loading.value = false;
   },
@@ -66,8 +76,8 @@ watch(
         <hr />
         <div class="columns is-multiline">
           <div class="column is-3" v-for="attribute in product.attributes">
-            <Select :id="String(attribute.id)" :key="attribute.id" :label="attribute.name">
-              <option v-for="(option, index) in attribute.options" :value="index">{{ option }}</option>
+            <Select :id="String(attribute.id)" :key="attribute.id" :label="attribute.name" v-model="selectedAttributes[attribute.id]">
+              <option v-for="(option, index) in attribute.options" :value="option" :key="index">{{ option }}</option>
             </Select>
           </div>
         </div>
