@@ -20,6 +20,7 @@ const catalogStore = useCatalog();
 const selectedVariation = ref<ProductVariation | undefined>(undefined);
 const quantity = ref(1);
 const loading = ref(false);
+// const selectedAttributes = ref([{ id, value }]);
 
 const product = computed(() => catalogStore.products.get(Number(route.params.id)));
 const description = computed(() => (product.value?.description ? DOMPurify.sanitize(product.value?.description) : ""));
@@ -37,10 +38,10 @@ watch(
       if (!catalogStore.products.get(id)) {
         router.push("/404");
       }
-      if (product.value && product.value?.variations.length > 0) {
-        const resVariation = await api.catalog.fetchProductVariationById(product.value.id, product.value.variations[0]);
-        selectedVariation.value = resVariation.payload;
-      }
+    }
+    if (product.value && product.value.variations.length > 0) {
+      const resVariation = await api.catalog.fetchProductVariationById(product.value.id, product.value.variations[0]);
+      selectedVariation.value = resVariation.payload;
     }
     loading.value = false;
   },
