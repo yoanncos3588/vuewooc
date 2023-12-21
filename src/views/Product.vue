@@ -27,7 +27,10 @@ const image = computed(() => (selectedVariation.value ? [selectedVariation.value
 
 watch(selectedAttributes, () => {
   if (product.value?.variations) {
-    selectedVariation.value = catalogStore.getVariationsByAttributes(selectedAttributes, product.value.variations);
+    selectedVariation.value = catalogStore.getVariationByAttributes(selectedAttributes, product.value.variations);
+    /**
+     * TODO test if variation exist and show error message if it's not
+     */
   }
 });
 

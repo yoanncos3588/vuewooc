@@ -159,19 +159,23 @@ export const useCatalog = defineStore("catalog", {
         return results;
       };
     },
-    getVariationsByAttributes: (state) => {
+    getVariationByAttributes: (state) => {
       return (selectedAttributes: { [key: string]: string }, variationsId: number[]) => {
-        for (const [mapKey, variation] of state.variations) {
-          let comparator: { [key: string]: string } = {};
-          // create comparator
-          for (const variationAttribute of variation.attributes) {
-            if (Object.keys(selectedAttributes).includes(String(variationAttribute.id))) {
-              comparator[variationAttribute.id] = variationAttribute.option;
+        // test all product variations from variationsId
+        for (const id of variationsId) {
+          const variation = state.variations.get(id);
+          if (variation) {
+            // create obj with the same format as selectedAttributes with data from variation attribute
+            let comparator: { [key: string]: string } = {};
+            for (const variationAttribute of variation.attributes) {
+              if (Object.keys(selectedAttributes).includes(String(variationAttribute.id))) {
+                comparator[variationAttribute.id] = variationAttribute.option;
+              }
             }
-          }
-          // check equality
-          if (isEqual(comparator, selectedAttributes)) {
-            return variation;
+            // check equality
+            if (isEqual(comparator, selectedAttributes)) {
+              return variation;
+            }
           }
         }
       };
