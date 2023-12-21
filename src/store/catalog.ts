@@ -6,6 +6,7 @@ import { UrlParams } from "../types/apiParams";
 import { toRaw } from "vue";
 import api from "../modules/api/api";
 import { Attribute, AttributeTerm } from "../types/attributes";
+import isEqual from "lodash.isequal";
 
 export interface catalogState {
   categories: Map<number, ProductCategorie>;
@@ -156,6 +157,23 @@ export const useCatalog = defineStore("catalog", {
           }
         });
         return results;
+      };
+    },
+    getVariationsByAttributes: (state) => {
+      return (selectedAttributes: { [key: string]: string }, variationsId: number[]) => {
+        for (const [mapKey, variation] of state.variations) {
+          let comparator: { [key: string]: string } = {};
+          // create comparator
+          for (const variationAttribute of variation.attributes) {
+            if (Object.keys(selectedAttributes).includes(String(variationAttribute.id))) {
+              comparator[variationAttribute.id] = variationAttribute.option;
+            }
+          }
+          // check equality
+          if (isEqual(comparator, selectedAttributes)) {
+            return variation;
+          }
+        }
       };
     },
   },

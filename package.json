@@ -19,6 +19,7 @@
     "dompurify": "^3.0.6",
     "email-validator": "^2.0.4",
     "lodash": "^4.17.21",
+    "lodash.isequal": "^4.5.0",
     "oauth-1.0a": "^2.2.6",
     "pinia": "^2.1.7",
     "sass": "^1.69.5",

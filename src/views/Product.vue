@@ -25,18 +25,11 @@ const product = computed(() => catalogStore.products.get(Number(route.params.id)
 const description = computed(() => (product.value?.description ? DOMPurify.sanitize(product.value?.description) : ""));
 const image = computed(() => (selectedVariation.value ? [selectedVariation.value.image] : product.value ? product.value.images : []));
 
-watch(
-  selectedAttributes,
-  () => {
-    for (const attribute in selectedAttributes) {
-      console.log(attribute);
-      console.log(selectedAttributes[attribute]);
-      const slug = catalogStore.attributes.get(Number(attribute))?.slug;
-      console.log(slug);
-    }
-  },
-  { immediate: true }
-);
+watch(selectedAttributes, () => {
+  if (product.value?.variations) {
+    selectedVariation.value = catalogStore.getVariationsByAttributes(selectedAttributes, product.value.variations);
+  }
+});
 
 watch(
   () => route.params.id,
