@@ -99,7 +99,8 @@ const catalog = {
    */
   fetchProductsAttributes: async (): Promise<ApiResponseStatus<Attribute[]>> => {
     try {
-      const { data: dataAttribute }: { data: Attribute[] } = await axiosInstanceWoo.get(`/products/attributes/`);
+      const param: UrlParams = { per_page: 100 };
+      const { data: dataAttribute }: { data: Attribute[] } = await axiosInstanceWoo.get(`/products/attributes/`, param);
       return setApiResponseStatus(true, "success", camelCase(dataAttribute));
     } catch (error) {
       return setApiResponseStatus(false, error);
@@ -123,7 +124,8 @@ const catalog = {
    */
   fetchAttributeTerms: async (attributeId: number): Promise<ApiResponseStatus<AttributeTerm[]>> => {
     try {
-      const { data: dataAttributeTerms }: { data: AttributeTerm[] } = await axiosInstanceWoo.get(`/products/attributes/${attributeId}/terms`);
+      const param: UrlParams = { per_page: 100 };
+      const { data: dataAttributeTerms }: { data: AttributeTerm[] } = await axiosInstanceWoo.get(`/products/attributes/${attributeId}/terms`, param);
       return setApiResponseStatus(true, "success", camelCase(dataAttributeTerms));
     } catch (error) {
       return setApiResponseStatus(false, error);
