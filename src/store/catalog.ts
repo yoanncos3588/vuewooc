@@ -5,16 +5,19 @@ import { Product } from "../types/products";
 import { UrlParams } from "../types/apiParams";
 import { toRaw } from "vue";
 import api from "../modules/api/api";
+import { Attribute } from "../types/attributes";
 
 export interface catalogState {
   categories: Map<number, ProductCategorie>;
   products: Map<number, Product>;
+  attributes: Map<number, Attribute>;
 }
 
 export const useCatalog = defineStore("catalog", {
   state: (): catalogState => ({
     categories: new Map(),
     products: new Map(),
+    attributes: new Map(),
   }),
 
   actions: {
@@ -33,6 +36,22 @@ export const useCatalog = defineStore("catalog", {
         this.categories = categoriesMap;
       } else {
         console.log("fetchCategories : " + resCategories.message);
+      }
+    },
+
+    /**
+     * Get all products attributes and save them in pinia store
+     */
+    async getAttributes() {
+      const resAttributes = await api.catalog.fetchProductsAttributes();
+      if (resAttributes.valid && resAttributes.payload) {
+        let attributesMap = new Map<number, Attribute>();
+        for (const attribute of resAttributes.payload) {
+          attributesMap.set(attribute.id, attribute);
+        }
+        this.attributes = attributesMap;
+      } else {
+        console.log("fetchCategories : " + resAttributes.message);
       }
     },
 
@@ -79,7 +98,6 @@ export const useCatalog = defineStore("catalog", {
     getCategoryBySlug: (state) => {
       return (slug: string) => {
         let results;
-        console.log("go");
         state.categories.forEach((category) => {
           if (category.slug === slug) {
             results = category;

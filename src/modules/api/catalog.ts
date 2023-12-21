@@ -1,4 +1,5 @@
 import { ApiResponseStatus, UrlParams } from "../../types/apiParams";
+import { Attribute } from "../../types/attributes";
 import { ProductCategorie } from "../../types/categories";
 import { Product, ProductVariation } from "../../types/products";
 import { axiosInstanceWoo, setApiResponseStatus } from "./api";
@@ -68,13 +69,50 @@ const catalog = {
     }
   },
   /**
-   * Fetch products from api by id
-   * @param productId @type {number} : product id to fetch
+   * Fetch variation from api by id
+   * @param productId @type {number} : product id parent of the variation
+   * @param productVariationId @type {number} : variation id to fetch
    */
   fetchProductVariationById: async (productId: number, productVariationId: number): Promise<ApiResponseStatus<ProductVariation>> => {
     try {
       const { data: dataProduct }: { data: ProductVariation } = await axiosInstanceWoo.get(`/products/${productId}/variations/${productVariationId}`);
       return setApiResponseStatus(true, "success", camelCase(dataProduct));
+    } catch (error) {
+      return setApiResponseStatus(false, error);
+    }
+  },
+  /**
+   * Fetch variations from api by id
+   * @param productId @type {number} : product id parent of the variations
+   * @param params @type {UrlParams} : obj listing all parameters use to construct url parameters for filtering
+   */
+  fetchProductVariations: async (productId: number, params: UrlParams): Promise<ApiResponseStatus<ProductVariation[]>> => {
+    try {
+      const { data: dataVariations }: { data: ProductVariation[] } = await axiosInstanceWoo.get(`/products/${productId}/variations`, params);
+      return setApiResponseStatus(true, "success", camelCase(dataVariations));
+    } catch (error) {
+      return setApiResponseStatus(false, error);
+    }
+  },
+  /**
+   * Fetch attributes from api
+   */
+  fetchProductsAttributes: async (): Promise<ApiResponseStatus<Attribute[]>> => {
+    try {
+      const { data: dataAttribute }: { data: Attribute[] } = await axiosInstanceWoo.get(`/products/attributes/`);
+      return setApiResponseStatus(true, "success", camelCase(dataAttribute));
+    } catch (error) {
+      return setApiResponseStatus(false, error);
+    }
+  },
+  /**
+   * Fetch attributes from api by id
+   * @param attributeId @type {number} : attribute's id
+   */
+  fetchProductsAttributesById: async (attributeId: number): Promise<ApiResponseStatus<Attribute>> => {
+    try {
+      const { data: dataAttribute }: { data: Attribute } = await axiosInstanceWoo.get(`/products/attributes/${attributeId}`);
+      return setApiResponseStatus(true, "success", camelCase(dataAttribute));
     } catch (error) {
       return setApiResponseStatus(false, error);
     }
