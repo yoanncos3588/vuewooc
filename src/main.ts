@@ -13,7 +13,7 @@ app.use(createPinia());
 const menusStore = useMenus();
 const catalogStore = useCatalog();
 
-Promise.all([menusStore.fetchMenu(40), catalogStore.getCategories()]).then(() => {
+Promise.all([menusStore.fetchMenu(40), catalogStore.getCategories(), catalogStore.getAttributesAndTerms()]).then(() => {
   app.use(router);
   app.mount("#app");
 });

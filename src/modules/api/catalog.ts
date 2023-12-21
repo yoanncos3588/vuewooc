@@ -1,5 +1,5 @@
 import { ApiResponseStatus, UrlParams } from "../../types/apiParams";
-import { Attribute } from "../../types/attributes";
+import { Attribute, AttributeTerm } from "../../types/attributes";
 import { ProductCategorie } from "../../types/categories";
 import { Product, ProductVariation } from "../../types/products";
 import { axiosInstanceWoo, setApiResponseStatus } from "./api";
@@ -113,6 +113,18 @@ const catalog = {
     try {
       const { data: dataAttribute }: { data: Attribute } = await axiosInstanceWoo.get(`/products/attributes/${attributeId}`);
       return setApiResponseStatus(true, "success", camelCase(dataAttribute));
+    } catch (error) {
+      return setApiResponseStatus(false, error);
+    }
+  },
+  /**
+   * Fetch attributes terms from api
+   * @param attributeId @type {number} : attribute's id
+   */
+  fetchAttributeTerms: async (attributeId: number): Promise<ApiResponseStatus<AttributeTerm[]>> => {
+    try {
+      const { data: dataAttributeTerms }: { data: AttributeTerm[] } = await axiosInstanceWoo.get(`/products/attributes/${attributeId}/terms`);
+      return setApiResponseStatus(true, "success", camelCase(dataAttributeTerms));
     } catch (error) {
       return setApiResponseStatus(false, error);
     }

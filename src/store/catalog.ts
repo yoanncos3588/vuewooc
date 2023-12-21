@@ -5,12 +5,13 @@ import { Product } from "../types/products";
 import { UrlParams } from "../types/apiParams";
 import { toRaw } from "vue";
 import api from "../modules/api/api";
-import { Attribute } from "../types/attributes";
+import { Attribute, AttributeTerm } from "../types/attributes";
 
 export interface catalogState {
   categories: Map<number, ProductCategorie>;
   products: Map<number, Product>;
   attributes: Map<number, Attribute>;
+  terms: Map<number, AttributeTerm>;
 }
 
 export const useCatalog = defineStore("catalog", {
@@ -18,6 +19,7 @@ export const useCatalog = defineStore("catalog", {
     categories: new Map(),
     products: new Map(),
     attributes: new Map(),
+    terms: new Map(),
   }),
 
   actions: {
@@ -42,7 +44,7 @@ export const useCatalog = defineStore("catalog", {
     /**
      * Get all products attributes and save them in pinia store
      */
-    async getAttributes() {
+    async getAttributesAndTerms() {
       const resAttributes = await api.catalog.fetchProductsAttributes();
       if (resAttributes.valid && resAttributes.payload) {
         let attributesMap = new Map<number, Attribute>();
@@ -50,8 +52,25 @@ export const useCatalog = defineStore("catalog", {
           attributesMap.set(attribute.id, attribute);
         }
         this.attributes = attributesMap;
+        this.getAttributesTerms();
       } else {
         console.log("fetchCategories : " + resAttributes.message);
+      }
+    },
+
+    /**
+     * Get all terms for all attributes and save them in pinia store
+     */
+    async getAttributesTerms() {
+      for (const [key, attribute] of this.attributes) {
+        const resTerms = await api.catalog.fetchAttributeTerms(attribute.id);
+        if (resTerms.valid && resTerms.payload) {
+          for (const term of resTerms.payload) {
+            this.terms.set(term.id, term);
+          }
+        } else {
+          console.log("fetchCategories : " + resTerms.message);
+        }
       }
     },
 

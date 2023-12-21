@@ -26,7 +26,9 @@ const product = computed(() => catalogStore.products.get(Number(route.params.id)
 const description = computed(() => (product.value?.description ? DOMPurify.sanitize(product.value?.description) : ""));
 const image = computed(() => (selectedVariation.value ? [selectedVariation.value.image] : product.value ? product.value.images : []));
 
-const isProductVariable = product.value ? product.value?.variations.length > 0 : false;
+const isProductVariable = product.value ? product.value.variations.length > 0 : false;
+
+watch(selectedAttributes, () => {});
 
 watch(
   () => route.params.id,
@@ -77,7 +79,9 @@ watch(
         <div class="columns is-multiline">
           <div class="column is-3" v-for="attribute in product.attributes">
             <Select :id="String(attribute.id)" :key="attribute.id" :label="attribute.name" v-model="selectedAttributes[attribute.id]">
-              <option v-for="(option, index) in attribute.options" :value="option" :key="index">{{ option }}</option>
+              <option v-for="(option, index) in attribute.options" :value="option" :key="index" :selected="selectedAttributes[attribute.id] === option">
+                {{ option }}
+              </option>
             </Select>
           </div>
         </div>
@@ -87,7 +91,7 @@ watch(
           </div>
           <div class="column">
             <div class="is-flex is-align-items-end" style="height: 100%">
-              <Button label="Ajouter au panier" icon="fa-solid fa-cart-plus" color="success" />
+              <Button label="Add to cart" icon="fa-solid fa-cart-plus" color="success" />
             </div>
           </div>
         </div>
