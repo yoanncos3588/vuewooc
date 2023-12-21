@@ -5,11 +5,18 @@ import { Product, ProductVariation } from "../../types/products";
 import { axiosInstanceWoo, setApiResponseStatus } from "./api";
 import { camelCase } from "change-case/keys";
 
-type PayloadFetchProducts = {
-  products: Product[];
+interface PaginatedPayload {
   totalPages: number;
-  totalProducts: number;
-};
+  totalItems: number;
+}
+
+interface PayloadFetchProducts extends PaginatedPayload {
+  products: Product[];
+}
+
+interface PayloadFetchVariations extends PaginatedPayload {
+  variations: ProductVariation[];
+}
 
 const catalog = {
   /**
@@ -46,9 +53,9 @@ const catalog = {
       const products: Product[] = productsRaw.map((product: any) => camelCase(product, 2));
 
       const totalPages = Number(res.headers["x-wp-totalpages"]);
-      const totalProducts = Number(res.headers["x-wp-total"]);
+      const totalItems = Number(res.headers["x-wp-total"]);
 
-      const payload: PayloadFetchProducts = { products, totalPages, totalProducts };
+      const payload: PayloadFetchProducts = { products, totalPages, totalItems };
 
       return setApiResponseStatus(true, "success", payload);
     } catch (error) {
@@ -86,10 +93,15 @@ const catalog = {
    * @param productId @type {number} : product id parent of the variations
    * @param params @type {UrlParams} : obj listing all parameters use to construct url parameters for filtering
    */
-  fetchProductVariations: async (productId: number, params: UrlParams): Promise<ApiResponseStatus<ProductVariation[]>> => {
+  fetchProductVariations: async (productId: number, params: UrlParams): Promise<ApiResponseStatus<PayloadFetchVariations>> => {
     try {
-      const { data: dataVariations }: { data: ProductVariation[] } = await axiosInstanceWoo.get(`/products/${productId}/variations`, params);
-      return setApiResponseStatus(true, "success", camelCase(dataVariations));
+      const res = await axiosInstanceWoo.get(`/products/${productId}/variations`, params);
+
+      const { data: dataVariations }: { data: ProductVariation[] } = res;
+      const totalPages = Number(res.headers["x-wp-totalpages"]);
+      const totalItems = Number(res.headers["x-wp-total"]);
+
+      return setApiResponseStatus(true, "success", { variations: camelCase(dataVariations), totalPages, totalItems });
     } catch (error) {
       return setApiResponseStatus(false, error);
     }

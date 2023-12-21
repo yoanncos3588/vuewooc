@@ -10,8 +10,7 @@ import ProductPrice from "../components/ProductPrice.vue";
 import Select from "../components/Select.vue";
 import TextInput from "../components/TextInput.vue";
 import Button from "../components/Button.vue";
-import { Product, ProductVariation } from "../types/products";
-import api from "../modules/api/api";
+import { ProductVariation } from "../types/products";
 
 const router = useRouter();
 const route = useRoute();
@@ -26,9 +25,18 @@ const product = computed(() => catalogStore.products.get(Number(route.params.id)
 const description = computed(() => (product.value?.description ? DOMPurify.sanitize(product.value?.description) : ""));
 const image = computed(() => (selectedVariation.value ? [selectedVariation.value.image] : product.value ? product.value.images : []));
 
-const isProductVariable = product.value ? product.value.variations.length > 0 : false;
-
-watch(selectedAttributes, () => {});
+watch(
+  selectedAttributes,
+  () => {
+    for (const attribute in selectedAttributes) {
+      console.log(attribute);
+      console.log(selectedAttributes[attribute]);
+      const slug = catalogStore.attributes.get(Number(attribute))?.slug;
+      console.log(slug);
+    }
+  },
+  { immediate: true }
+);
 
 watch(
   () => route.params.id,
@@ -43,14 +51,14 @@ watch(
       }
     }
     if (product.value && product.value.variations.length > 0) {
-      // product is variable, fetch the first variation to have an active product in the page
-      const resVariation = await api.catalog.fetchProductVariationById(product.value.id, product.value.variations[0]);
-      if (resVariation.valid && resVariation.payload) {
-        selectedVariation.value = resVariation.payload;
-        // clear old attributes
-        Object.keys(selectedAttributes).forEach((key) => delete selectedAttributes[key]);
+      // product is variable, fetch all the variation because filtering by attribute is not possible for variations...
+      await catalogStore.getVariations(product.value.id);
+      selectedVariation.value = catalogStore.variations.get(product.value.variations[0]);
+      Object.keys(selectedAttributes).forEach((key) => delete selectedAttributes[key]);
+
+      if (selectedVariation.value) {
         for (const attribute of selectedVariation.value.attributes) {
-          // set default value from the variation fetched
+          // set default value from the first variation
           selectedAttributes[attribute.id] = attribute.option;
         }
       }
