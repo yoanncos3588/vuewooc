@@ -70,7 +70,7 @@ const catalog = {
   fetchProductById: async (productId: number): Promise<ApiResponseStatus<Product>> => {
     try {
       const { data: dataProduct }: { data: Product } = await axiosInstanceWoo.get(`/products/${productId}`);
-      return setApiResponseStatus(true, "success", camelCase(dataProduct));
+      return setApiResponseStatus(true, "success", camelCase(dataProduct, 2));
     } catch (error) {
       return setApiResponseStatus(false, error);
     }
@@ -83,7 +83,7 @@ const catalog = {
   fetchProductVariationById: async (productId: number, productVariationId: number): Promise<ApiResponseStatus<ProductVariation>> => {
     try {
       const { data: dataProduct }: { data: ProductVariation } = await axiosInstanceWoo.get(`/products/${productId}/variations/${productVariationId}`);
-      return setApiResponseStatus(true, "success", camelCase(dataProduct));
+      return setApiResponseStatus(true, "success", camelCase(dataProduct, 2));
     } catch (error) {
       return setApiResponseStatus(false, error);
     }
@@ -101,7 +101,7 @@ const catalog = {
       const totalPages = Number(res.headers["x-wp-totalpages"]);
       const totalItems = Number(res.headers["x-wp-total"]);
 
-      return setApiResponseStatus(true, "success", { variations: camelCase(dataVariations), totalPages, totalItems });
+      return setApiResponseStatus(true, "success", { variations: camelCase(dataVariations, 2), totalPages, totalItems });
     } catch (error) {
       return setApiResponseStatus(false, error);
     }
@@ -113,7 +113,7 @@ const catalog = {
     try {
       const param: UrlParams = { per_page: 100 };
       const { data: dataAttribute }: { data: Attribute[] } = await axiosInstanceWoo.get(`/products/attributes/`, param);
-      return setApiResponseStatus(true, "success", camelCase(dataAttribute));
+      return setApiResponseStatus(true, "success", camelCase(dataAttribute, 2));
     } catch (error) {
       return setApiResponseStatus(false, error);
     }
@@ -125,7 +125,7 @@ const catalog = {
   fetchProductsAttributesById: async (attributeId: number): Promise<ApiResponseStatus<Attribute>> => {
     try {
       const { data: dataAttribute }: { data: Attribute } = await axiosInstanceWoo.get(`/products/attributes/${attributeId}`);
-      return setApiResponseStatus(true, "success", camelCase(dataAttribute));
+      return setApiResponseStatus(true, "success", camelCase(dataAttribute, 2));
     } catch (error) {
       return setApiResponseStatus(false, error);
     }
@@ -138,7 +138,7 @@ const catalog = {
     try {
       const param: UrlParams = { per_page: 100 };
       const { data: dataAttributeTerms }: { data: AttributeTerm[] } = await axiosInstanceWoo.get(`/products/attributes/${attributeId}/terms`, param);
-      return setApiResponseStatus(true, "success", camelCase(dataAttributeTerms));
+      return setApiResponseStatus(true, "success", camelCase(dataAttributeTerms, 2));
     } catch (error) {
       return setApiResponseStatus(false, error);
     }

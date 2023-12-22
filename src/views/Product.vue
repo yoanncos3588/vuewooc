@@ -57,7 +57,6 @@ watch(
       await catalogStore.getVariations(product.value.id);
       //get first variation to have an active variation
       selectedVariation.value = catalogStore.variations.get(product.value.variations[0]);
-      console.log(selectedVariation.value);
       // clear previous attributes
       Object.keys(selectedAttributes).forEach((key) => delete selectedAttributes[key]);
       if (selectedVariation.value) {
@@ -85,7 +84,7 @@ watch(
         <div class="content" v-html="description"></div>
         <hr />
         <p class="is-size-4">
-          <ProductPrice :productId="product.id" />
+          <ProductPrice :productId="product.id" :variationId="selectedVariation?.id" />
         </p>
         <hr />
         <div class="columns is-multiline">
