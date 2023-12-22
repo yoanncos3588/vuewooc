@@ -81,8 +81,10 @@ watch(
       <div class="column is-6-desktop">
         <Title :text="product.name" level="h1" size="2" />
         <hr />
-        <div class="content" v-html="description"></div>
-        <hr />
+        <template v-if="description">
+          <div class="content" v-html="description"></div>
+          <hr />
+        </template>
         <p class="is-size-4">
           <ProductPrice :productId="product.id" :variationId="selectedVariation?.id" />
         </p>
