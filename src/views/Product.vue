@@ -10,6 +10,7 @@ import ProductPrice from "../components/ProductPrice.vue";
 import Select from "../components/Select.vue";
 import TextInput from "../components/TextInput.vue";
 import Button from "../components/Button.vue";
+import Alert from "../components/Alert.vue";
 import { ProductVariation } from "../types/products";
 
 const router = useRouter();
@@ -22,15 +23,20 @@ const loading = ref(false);
 const selectedAttributes = reactive<{ [key: string]: string }>({});
 
 const product = computed(() => catalogStore.products.get(Number(route.params.id)));
-const description = computed(() => (product.value?.description ? DOMPurify.sanitize(product.value?.description) : ""));
+const hasVariation = computed(() => (product.value && product.value.variations.length > 1 ? true : false));
+const noVariationFoundForAttributes = computed(() => hasVariation.value && selectedVariation.value === undefined);
+const description = computed(() =>
+  selectedVariation.value
+    ? DOMPurify.sanitize(selectedVariation.value.description)
+    : product.value?.description
+    ? DOMPurify.sanitize(product.value.description)
+    : ""
+);
 const image = computed(() => (selectedVariation.value ? [selectedVariation.value.image] : product.value ? product.value.images : []));
 
 watch(selectedAttributes, () => {
   if (product.value?.variations) {
     selectedVariation.value = catalogStore.getVariationByAttributes(selectedAttributes, product.value.variations);
-    /**
-     * TODO test if variation exist and show error message if it's not
-     */
   }
 });
 
@@ -46,12 +52,14 @@ watch(
         router.push("/404");
       }
     }
-    if (product.value && product.value.variations.length > 0) {
+    if (product.value && hasVariation.value) {
       // product is variable, fetch all the variation because filtering by attribute is not possible for variations...
       await catalogStore.getVariations(product.value.id);
+      //get first variation to have an active variation
       selectedVariation.value = catalogStore.variations.get(product.value.variations[0]);
+      console.log(selectedVariation.value);
+      // clear previous attributes
       Object.keys(selectedAttributes).forEach((key) => delete selectedAttributes[key]);
-
       if (selectedVariation.value) {
         for (const attribute of selectedVariation.value.attributes) {
           // set default value from the first variation
@@ -95,10 +103,11 @@ watch(
           </div>
           <div class="column">
             <div class="is-flex is-align-items-end" style="height: 100%">
-              <Button label="Add to cart" icon="fa-solid fa-cart-plus" color="success" />
+              <Button label="Add to cart" icon="fa-solid fa-cart-plus" :disabled="noVariationFoundForAttributes" color="success" />
             </div>
           </div>
         </div>
+        <div><Alert message="This product is not available" level="danger" v-show="noVariationFoundForAttributes" /></div>
       </div>
     </div>
   </article>
