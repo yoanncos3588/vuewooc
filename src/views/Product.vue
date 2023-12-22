@@ -83,7 +83,6 @@ watch(
 </script>
 
 <template>
-  {{ product?.price }}
   <article v-if="!loading && product">
     <div class="columns">
       <div class="column is-6-desktop">
@@ -96,9 +95,10 @@ watch(
           <div class="content" v-html="description"></div>
           <hr />
         </template>
-        <p class="is-size-4">
+        <p class="is-size-4" v-if="!noVariationFoundForAttributes">
           <ProductPrice :productId="product.id" :variationId="selectedVariation?.id" />
         </p>
+        <div v-else><Alert message="This product is not available" level="danger" /></div>
         <hr />
         <div class="columns is-multiline">
           <div class="column is-3" v-for="attribute in product.attributes">
@@ -119,7 +119,6 @@ watch(
             </div>
           </div>
         </div>
-        <div><Alert message="This product is not available" level="danger" v-show="noVariationFoundForAttributes" /></div>
       </div>
     </div>
   </article>
