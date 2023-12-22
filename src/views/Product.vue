@@ -56,7 +56,13 @@ watch(
     }
     if (product.value && hasVariation.value) {
       // product is variable, fetch all the variation because filtering by attribute is not possible for variations...
-      await catalogStore.getVariations(product.value.id);
+      for (const id of product.value.variations) {
+        // test if every variations are in the store
+        if (!catalogStore.variations.get(id)) {
+          await catalogStore.getVariations(product.value.id);
+          break;
+        }
+      }
       //get first variation to have an active variation
       selectedVariation.value = catalogStore.variations.get(product.value.variations[0]);
       // clear previous attributes
