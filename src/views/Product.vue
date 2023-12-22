@@ -34,12 +34,14 @@ const description = computed(() =>
 );
 const image = computed(() => (selectedVariation.value ? [selectedVariation.value.image] : product.value ? product.value.images : []));
 
+/** watch if attributes (size, color...) change */
 watch(selectedAttributes, () => {
   if (product.value?.variations) {
     selectedVariation.value = catalogStore.getVariationByAttributes(selectedAttributes, product.value.variations);
   }
 });
 
+/** watch route product id parameter */
 watch(
   () => route.params.id,
   async () => {
@@ -65,6 +67,8 @@ watch(
           selectedAttributes[attribute.id] = attribute.option;
         }
       }
+    } else {
+      selectedVariation.value = undefined;
     }
     loading.value = false;
   },
@@ -73,6 +77,7 @@ watch(
 </script>
 
 <template>
+  {{ product?.price }}
   <article v-if="!loading && product">
     <div class="columns">
       <div class="column is-6-desktop">
@@ -113,6 +118,7 @@ watch(
     </div>
   </article>
   <Loading v-else />
-  <RouterLink to="/product/hoodie-with-zipper/30">Link test</RouterLink>
+  <RouterLink to="/product/hoodie/22">Variable prod</RouterLink>
+  <RouterLink to="/product/hoodie-with-pocket/29">Link test</RouterLink>
   <RouterLink to="/product/hoodie-with-logo/23">Link test 2</RouterLink>
 </template>
