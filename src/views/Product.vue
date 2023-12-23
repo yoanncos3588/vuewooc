@@ -12,6 +12,7 @@ import TextInput from "../components/TextInput.vue";
 import Button from "../components/Button.vue";
 import Alert from "../components/Alert.vue";
 import { ProductVariation } from "../types/products";
+import ProductsListCrossSell from "../components/ProductsListCrossSell.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -79,44 +80,51 @@ watch(
 </script>
 
 <template>
-  <article v-if="!loading && product">
-    <div class="columns">
-      <div class="column is-6-desktop">
-        <ProductImage :images="image" />
-      </div>
-      <div class="column is-6-desktop">
-        <Title :text="product.name" level="h1" size="2" />
-        <hr />
-        <template v-if="description">
-          <div class="content" v-html="description"></div>
-          <hr />
-        </template>
-        <p class="is-size-4" v-if="!noVariationFoundForAttributes">
-          <ProductPrice :productId="product.id" :variationId="selectedVariation?.id" />
-        </p>
-        <div v-else><Alert message="This product is not available" level="danger" /></div>
-        <hr />
-        <div class="columns is-multiline">
-          <div class="column is-3" v-for="attribute in product.attributes">
-            <Select :id="String(attribute.id)" :key="attribute.id" :label="attribute.name" v-model="selectedAttributes[attribute.id]">
-              <option v-for="(option, index) in attribute.options" :value="option" :key="index" :selected="selectedAttributes[attribute.id] === option">
-                {{ option }}
-              </option>
-            </Select>
-          </div>
+  <template v-if="!loading && product">
+    <article>
+      <div class="columns">
+        <div class="column is-6-desktop">
+          <ProductImage :images="image" />
         </div>
-        <div class="columns is-multiline">
-          <div class="column is-3-desktop">
-            <TextInput label="Quantité" type="number" id="setQuantity" v-model="quantity" />
+        <div class="column is-6-desktop">
+          <Title :text="product.name" level="h1" size="2" />
+          <hr />
+          <template v-if="description">
+            <div class="content" v-html="description"></div>
+            <hr />
+          </template>
+          <p class="is-size-4" v-if="!noVariationFoundForAttributes">
+            <ProductPrice :productId="product.id" :variationId="selectedVariation?.id" />
+          </p>
+          <div v-else><Alert message="This product is not available" level="danger" /></div>
+          <hr />
+          <div class="columns is-multiline">
+            <div class="column is-3" v-for="attribute in product.attributes">
+              <Select :id="String(attribute.id)" :key="attribute.id" :label="attribute.name" v-model="selectedAttributes[attribute.id]">
+                <option v-for="(option, index) in attribute.options" :value="option" :key="index" :selected="selectedAttributes[attribute.id] === option">
+                  {{ option }}
+                </option>
+              </Select>
+            </div>
           </div>
-          <div class="column">
-            <div class="is-flex is-align-items-end" style="height: 100%">
-              <Button label="Add to cart" icon="fa-solid fa-cart-plus" :disabled="noVariationFoundForAttributes" color="success" />
+          <div class="columns is-multiline">
+            <div class="column is-3-desktop">
+              <TextInput label="Quantité" type="number" id="setQuantity" v-model="quantity" />
+            </div>
+            <div class="column">
+              <div class="is-flex is-align-items-end" style="height: 100%">
+                <Button label="Add to cart" icon="fa-solid fa-cart-plus" :disabled="noVariationFoundForAttributes" color="success" />
+              </div>
             </div>
           </div>
         </div>
       </div>
+    </article>
+    <div v-show="product.crossSellIds.length">
+      <hr />
+      <Title text="You might also like…" level="h2" size="4" />
+      <ProductsListCrossSell :productIds="product.crossSellIds" />
     </div>
-  </article>
+  </template>
   <Loading v-else />
 </template>

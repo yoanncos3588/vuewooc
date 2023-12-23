@@ -37,6 +37,7 @@ export interface Product {
   images: Array<ProductImages>;
   attributes: Array<ProductAttributes>;
   variations: Array<number>;
+  crossSellIds: Array<number>;
 }
 
 export interface ProductTags {
@@ -83,6 +84,7 @@ export interface ProductVariation
     | "tags"
     | "images"
     | "variations"
+    | "crossSellIds"
   > {
   image: ProductImages;
   attributes: VariationAttributes[];
