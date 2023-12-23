@@ -81,19 +81,23 @@ export const useCatalog = defineStore("catalog", {
      * Get products and save them in pinia store
      * @param params @type {UrlParams} : obj listing all parameters use to construct url parameters for filtering
      */
-    async getProducts(params?: UrlParams): Promise<{ valid: boolean; totalPages: number; totalProducts: number }> {
+    async getProducts(params?: UrlParams): Promise<{ valid: boolean; products: Product[]; totalPages: number; totalProducts: number }> {
       const resProducts = await api.catalog.fetchProducts(params);
 
       if (resProducts.valid && resProducts.payload) {
-        this.products.clear();
         const { products } = resProducts.payload;
         for (const product of products) {
           this.products.set(product.id, product);
         }
-        return { valid: resProducts.valid, totalPages: resProducts.payload.totalPages, totalProducts: resProducts.payload.totalItems };
+        return {
+          valid: resProducts.valid,
+          products: resProducts.payload.products,
+          totalPages: resProducts.payload.totalPages,
+          totalProducts: resProducts.payload.totalItems,
+        };
       } else {
         console.log("fetchProducts : " + resProducts.message);
-        return { valid: resProducts.valid, totalPages: 0, totalProducts: 0 };
+        return { valid: resProducts.valid, products: [], totalPages: 0, totalProducts: 0 };
       }
     },
 

@@ -2,14 +2,12 @@
 import Title from "../components/Title.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useCatalog } from "../store/catalog";
-import { computed, ref, watch } from "vue";
+import { ref, watch } from "vue";
 import { UrlParams } from "../types/apiParams";
 import { ProductCategorie } from "../types/categories";
-import ProductsList from "../components/ProductsList.vue";
-import Loading from "../components/Loading.vue";
-import Pagination from "../components/Pagination.vue";
 import OrderBy, { orderByOptions } from "../components/OrderBy.vue";
 import Slider from "@vueform/slider";
+import ProductsListCategory from "../components/ProductsListCategory.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -19,10 +17,7 @@ const maxPriceDefault = 100;
 const orderByDefault = "date?order=asc";
 
 const category = ref<ProductCategorie | undefined>(catalogStore.getCategoryBySlug(getSlug(route.params.slug)));
-const totalPages = ref<number>(1);
-const totalProducts = ref<number>(0);
-const currentPage = ref<number>(route.query.page ? Number(route.query.page) : 1);
-const isLoading = ref(false);
+const queryParams = ref<UrlParams | undefined>(undefined);
 const orderBy = ref<string>(route.query.orderby ? `${route.query.orderby}?order=${route.query.order}` : orderByDefault);
 const onlySales = ref(route.query.on_sale ? route.query.on_sale : false);
 const priceRange = ref<Array<number>>([
@@ -37,8 +32,6 @@ const orderByCase: orderByOptions[] = [
   { value: "price?order=asc", label: "Price (Increasing)" },
   { value: "price?order=desc", label: "Price (Decreasing)" },
 ];
-
-const showNavigation = computed(() => totalPages.value > 1);
 
 /** watch price range */
 watch(priceRange, () => {
@@ -92,7 +85,7 @@ watch(
     }
     syncStateWithQuery();
     if (category.value) {
-      getProducts({ category: category.value.id, ...nextQuery });
+      queryParams.value = { category: category.value.id, ...nextQuery };
     } else {
       router.push("/404");
     }
@@ -101,22 +94,9 @@ watch(
 );
 
 /**
- * call api to get products
- * @param queryParams
- */
-async function getProducts(queryParams: UrlParams = {}) {
-  isLoading.value = true;
-  const resProducts = await catalogStore.getProducts(queryParams);
-  totalPages.value = resProducts.totalPages;
-  totalProducts.value = resProducts.totalProducts;
-  isLoading.value = false;
-}
-
-/**
  * keep url paramaters and state sync (mostly for back navigation cases)
  */
 function syncStateWithQuery() {
-  route.query.page ? (currentPage.value = Number(route.query.page)) : 1;
   route.query.orderby ? (orderBy.value = `${route.query.orderby}?order=${route.query.order}`) : (orderBy.value = orderByDefault);
   route.query.min_price ? (priceRange.value[0] = Number(route.query.min_price)) : (priceRange.value[0] = 0);
   route.query.max_price ? (priceRange.value[1] = Number(route.query.max_price)) : (priceRange.value[1] = maxPriceDefault);
@@ -158,16 +138,7 @@ function getSlug(newSlug: Array<string> | string): string {
           </div>
         </div>
       </div>
-      <div class="mb-5">
-        <hr />
-        <p class="is-size-7 has-text-grey-light">{{ totalProducts }} product(s) found</p>
-      </div>
-      <template v-if="!isLoading">
-        <Pagination :totalPages="totalPages" v-model:currentPage="currentPage" v-if="showNavigation" :addToUrl="true" />
-        <ProductsList />
-        <Pagination :totalPages="totalPages" v-model:currentPage="currentPage" v-if="showNavigation" :addToUrl="true" />
-      </template>
-      <template v-else> <Loading /> </template>
+      <ProductsListCategory :queryParams="queryParams" v-if="queryParams" />
     </div>
   </section>
 </template>
