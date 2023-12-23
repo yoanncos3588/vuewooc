@@ -37,7 +37,7 @@ const image = computed(() => (selectedVariation.value ? [selectedVariation.value
 /** watch if attributes (size, color...) change */
 watch(selectedAttributes, () => {
   if (product.value?.variations) {
-    selectedVariation.value = catalogStore.getVariationByAttributes(selectedAttributes, product.value.variations);
+    selectedVariation.value = catalogStore.getVariationByAttributes(selectedAttributes, product.value.id);
   }
 });
 
@@ -55,16 +55,12 @@ watch(
       }
     }
     if (product.value && hasVariation.value) {
-      // product is variable, fetch all the variation because filtering by attribute is not possible for variations...
-      for (const id of product.value.variations) {
-        // test if every variations are in the store
-        if (!catalogStore.variations.get(id)) {
-          await catalogStore.getVariations(product.value.id);
-          break;
-        }
+      //check if variations for this product exist in store and fetch if necessarary
+      if (!catalogStore.variations.get(product.value.id)) {
+        await catalogStore.getVariations(product.value.id);
       }
-      //get first variation to have an active variation
-      selectedVariation.value = catalogStore.variations.get(product.value.variations[0]);
+      // get first variation to have an active variation on load
+      selectedVariation.value = catalogStore.variations.get(product.value.id)![0];
       // clear previous attributes
       Object.keys(selectedAttributes).forEach((key) => delete selectedAttributes[key]);
       if (selectedVariation.value) {
@@ -123,7 +119,4 @@ watch(
     </div>
   </article>
   <Loading v-else />
-  <RouterLink to="/product/hoodie/22">Variable prod</RouterLink>
-  <RouterLink to="/product/hoodie-with-pocket/29">Link test</RouterLink>
-  <RouterLink to="/product/hoodie-with-logo/23">Link test 2</RouterLink>
 </template>

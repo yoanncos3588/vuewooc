@@ -31,6 +31,7 @@
   "devDependencies": {
     "@types/crypto-js": "^4.2.1",
     "@types/dompurify": "^3.0.5",
+    "@types/lodash.isequal": "^4.5.8",
     "@vitejs/plugin-vue": "^4.2.3",
     "autoprefixer": "^10.4.16",
     "typescript": "^5.0.2",

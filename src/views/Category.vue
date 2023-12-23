@@ -132,7 +132,7 @@ function getSlug(newSlug: Array<string> | string): string {
         <div class="column is-2-desktop is-offset-1-desktop">
           <div class="category-filter is-flex is-align-items-center">
             <div class="category-filter__item category-filter__item--sales">
-              <p class="label">Filtrer</p>
+              <p class="label">Filters</p>
               <label class="checkbox"> <input type="checkbox" :value="onlySales" v-model="onlySales" /> Sales only </label>
             </div>
           </div>

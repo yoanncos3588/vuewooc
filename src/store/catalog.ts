@@ -11,7 +11,7 @@ import isEqual from "lodash.isequal";
 export interface catalogState {
   categories: Map<number, ProductCategorie>;
   products: Map<number, Product>;
-  variations: Map<number, ProductVariation>;
+  variations: Map<number, ProductVariation[]>;
   attributes: Map<number, Attribute>;
   terms: Map<number, AttributeTerm>;
 }
@@ -122,8 +122,11 @@ export const useCatalog = defineStore("catalog", {
       const resVariations = await api.catalog.fetchProductVariations(productId, params);
 
       if (resVariations.valid && resVariations.payload?.variations) {
-        for (const variation of resVariations.payload.variations) {
-          this.variations.set(variation.id, variation);
+        const variationsArray = this.variations.get(productId);
+        if (variationsArray) {
+          this.variations.set(productId, [...variationsArray, ...resVariations.payload.variations]);
+        } else {
+          this.variations.set(productId, resVariations.payload.variations);
         }
         if (resVariations.payload.totalPages > 1) {
           this.getVariations(productId, { ...params, page: page++ });
@@ -163,13 +166,13 @@ export const useCatalog = defineStore("catalog", {
       };
     },
     getVariationByAttributes: (state) => {
-      return (selectedAttributes: { [key: string]: string }, variationsId: number[]) => {
+      return (selectedAttributes: { [key: string]: string }, productId: number) => {
         // test all product variations from variationsId
-        for (const id of variationsId) {
-          const variation = state.variations.get(id);
-          if (variation) {
-            // create obj with the same format as selectedAttributes with data from variation attribute
-            let comparator: { [key: string]: string } = {};
+        const variationsArray = state.variations.get(productId);
+        if (variationsArray) {
+          // create obj with the same format as selectedAttributes with data from variation attribute
+          let comparator: { [key: string]: string } = {};
+          for (const variation of variationsArray) {
             for (const variationAttribute of variation.attributes) {
               if (Object.keys(selectedAttributes).includes(String(variationAttribute.id))) {
                 comparator[variationAttribute.id] = variationAttribute.option;
