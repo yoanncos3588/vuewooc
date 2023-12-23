@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { useCatalog } from "../store/catalog";
 import ProductsList from "../components/ProductsList.vue";
-import { computed, ref } from "vue";
-import { Product } from "../types/products";
+import { computed } from "vue";
 
 const props = defineProps<{
   productIds: number[];
