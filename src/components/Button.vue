@@ -50,7 +50,7 @@ function click() {
 </script>
 
 <template>
-  <component :is="htmlTag" :to="to" class="button" :class="cssClass" v-bind="setAttributes()" @onclick="click">
+  <component :is="htmlTag" :to="to" class="button" :class="cssClass" v-bind="setAttributes()" @click="click">
     <span v-if="label">
       {{ label }}
     </span>

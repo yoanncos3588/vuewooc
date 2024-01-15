@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useRoute, useRouter } from "vue-router";
 import { useUser } from "../store/user";
 import Button from "./Button.vue";
 import Dropdown from "./Dropdown.vue";
@@ -6,6 +7,12 @@ import MenuMain from "./MenuMain.vue";
 import SearchForm from "./searchForm.vue";
 
 const userStore = useUser();
+const router = useRouter();
+
+function logoutAndRedirect() {
+  userStore.logout();
+  router.push("/");
+}
 </script>
 
 <template>
@@ -57,6 +64,10 @@ const userStore = useUser();
                   <hr class="dropdown-divider" />
                   <div class="dropdown-item">
                     <RouterLink to="#">Mes commandes</RouterLink>
+                  </div>
+                  <hr class="dropdown-divider" />
+                  <div class="dropdown-item">
+                    <Button label="Se déconnecter" @click="logoutAndRedirect" />
                   </div>
                 </template>
               </Dropdown>
