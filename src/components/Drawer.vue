@@ -9,10 +9,10 @@ import { useMenus } from "../store/menus";
 const userStore = useUser();
 const menuStore = useMenus();
 
-watch(() => menuStore.drawerOpen, lockScroll);
+watch(() => menuStore.isDrawerOpen, lockScroll);
 
 function lockScroll() {
-  if (menuStore.drawerOpen) {
+  if (menuStore.isDrawerOpen) {
     document.body.classList.add("is-clipped");
     document.querySelector("html")?.classList.add("is-clipped");
   } else {
@@ -23,8 +23,8 @@ function lockScroll() {
 </script>
 
 <template>
-  <div class="drawer" :class="{ 'is-visible': menuStore.drawerOpen }">
-    <div class="drawer-content p-5" :class="{ 'is-visible': menuStore.drawerOpen }">
+  <div class="drawer" :class="{ 'is-visible': menuStore.isDrawerOpen }">
+    <div class="drawer-content p-5" :class="{ 'is-visible': menuStore.isDrawerOpen }">
       <div class="drawer-close"><button class="delete is-medium" @click="$emit('toggleBurger')"></button></div>
       <nav class="menu">
         <p class="menu-label">Nos produits</p>
@@ -40,10 +40,10 @@ function lockScroll() {
       </nav>
       <div class="columns mt-4" v-if="!userStore.isUserConnected">
         <div class="column">
-          <Button label="Se connecter" to="/login" />
+          <Button label="Se connecter" to="/login" color="primary" />
         </div>
         <div class="column">
-          <RouterLink to="/signup" class="button is-primary is-block">Créer un compte</RouterLink>
+          <Button label="Créer un compte" to="/signup" color="primary" />
         </div>
       </div>
       <div class="columns mt-4" v-if="userStore.isUserConnected">
