@@ -7,8 +7,10 @@ import TextInput from "./TextInput.vue";
 import { isRequired, validate } from "../utils/validateInput";
 import Button from "./Button.vue";
 import api from "../modules/api/api";
+import { useRouter } from "vue-router";
 
 const userStore = useUser();
+const router = useRouter();
 
 interface Credentials {
   email: string;
@@ -21,6 +23,8 @@ const credentials: Credentials = reactive({
 });
 const level = ref<AlertLevels>("danger");
 const message = ref("");
+const isLoading = ref(false);
+const isLoginDisabled = ref(false);
 
 const emailValid = computed(() => validate(credentials.email, [isRequired]));
 const passwordValid = computed(() => validate(credentials.password, [isRequired]));
@@ -30,6 +34,8 @@ const formValid = computed(() => emailValid.value.valid || passwordValid.value.v
  * send login
  */
 async function handleSubmit() {
+  isLoading.value = true;
+  isLoginDisabled.value = true;
   if (!formValid.value) {
     return;
   }
@@ -41,10 +47,15 @@ async function handleSubmit() {
     message.value = resCurrentUser.message;
     if (resCurrentUser.valid) {
       level.value = "success";
+      setTimeout(() => {
+        router.push("/");
+      }, 2000);
     }
   } else {
     message.value = resLogin.message;
+    isLoginDisabled.value = false;
   }
+  isLoading.value = false;
 }
 </script>
 
@@ -61,6 +72,6 @@ async function handleSubmit() {
     />
     <TextInput id="password" type="password" v-model="credentials.password" label="Mot de passe" :error="passwordValid.error" icon="fa-lock" />
     <Alert :message="message" :level="level" v-if="message" />
-    <Button type="submit" color="primary" label="Se connecter" />
+    <Button type="submit" color="primary" label="Se connecter" :loading="isLoading" :disabled="isLoginDisabled" />
   </form>
 </template>
