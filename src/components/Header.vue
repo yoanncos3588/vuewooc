@@ -1,18 +1,12 @@
 <script setup lang="ts">
-import { useRouter } from "vue-router";
 import { useUser } from "../store/user";
 import Button from "./Button.vue";
 import Dropdown from "./Dropdown.vue";
 import MenuMain from "./MenuMain.vue";
 import SearchForm from "./searchForm.vue";
+import ButtonLogOut from "./ButtonLogOut.vue";
 
 const userStore = useUser();
-const router = useRouter();
-
-function logoutAndRedirect() {
-  userStore.logout();
-  router.push("/");
-}
 </script>
 
 <template>
@@ -67,7 +61,7 @@ function logoutAndRedirect() {
                   </div>
                   <hr class="dropdown-divider" />
                   <div class="dropdown-item">
-                    <Button label="Se déconnecter" @click="logoutAndRedirect" />
+                    <ButtonLogOut />
                   </div>
                 </template>
               </Dropdown>
