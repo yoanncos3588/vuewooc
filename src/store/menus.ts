@@ -5,11 +5,13 @@ import { axiosInstanceRest } from "../modules/api/api";
 
 interface MenuState {
   main: null | MenuItems[];
+  drawerOpen: boolean;
 }
 
 export const useMenus = defineStore("menus", {
   state: (): MenuState => ({
     main: JSON.parse(localStorage.getItem("mainMenu")!),
+    drawerOpen: false,
   }),
   actions: {
     async fetchMenu(id: number) {
@@ -52,6 +54,9 @@ export const useMenus = defineStore("menus", {
         console.log(error);
         console.log(`Error : cant load menu with id ${id}`);
       }
+    },
+    toggleDrawer() {
+      this.drawerOpen = !this.drawerOpen;
     },
   },
   getters: {},

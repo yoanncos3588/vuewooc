@@ -1,19 +1,30 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { watch } from "vue";
 import Drawer from "./components/Drawer.vue";
 import Header from "./components/Header.vue";
 import Footer from "./components/Footer.vue";
 import Loading from "./components/Loading.vue";
+import { useRoute } from "vue-router";
+import { useMenus } from "./store/menus";
 
-const isDrawerOpen = ref(false);
+const route = useRoute();
+
+const menuStore = useMenus();
 
 function toggleBurger() {
-  isDrawerOpen.value = !isDrawerOpen.value;
+  menuStore.toggleDrawer();
 }
+
+watch(
+  () => route.path,
+  () => {
+    toggleBurger();
+  }
+);
 </script>
 
 <template>
-  <Drawer :isDrawerOpen="isDrawerOpen" @toggleBurger="toggleBurger" />
+  <Drawer @toggleBurger="toggleBurger" />
   <Header @toggleBurger="toggleBurger" />
   <main class="my-5 px-5">
     <div class="container">

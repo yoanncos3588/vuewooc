@@ -1,19 +1,18 @@
 <script setup lang="ts">
 import { watch } from "vue";
 import MenuMain from "./MenuMain.vue";
+import Button from "./Button.vue";
 import ButtonLogOut from "./ButtonLogOut.vue";
 import { useUser } from "../store/user";
-
-const props = defineProps<{
-  isDrawerOpen: boolean;
-}>();
+import { useMenus } from "../store/menus";
 
 const userStore = useUser();
+const menuStore = useMenus();
 
-watch(() => props.isDrawerOpen, lockScroll);
+watch(() => menuStore.drawerOpen, lockScroll);
 
 function lockScroll() {
-  if (props.isDrawerOpen) {
+  if (menuStore.drawerOpen) {
     document.body.classList.add("is-clipped");
     document.querySelector("html")?.classList.add("is-clipped");
   } else {
@@ -24,8 +23,8 @@ function lockScroll() {
 </script>
 
 <template>
-  <div class="drawer" :class="{ 'is-visible': isDrawerOpen }">
-    <div class="drawer-content p-5" :class="{ 'is-visible': isDrawerOpen }">
+  <div class="drawer" :class="{ 'is-visible': menuStore.drawerOpen }">
+    <div class="drawer-content p-5" :class="{ 'is-visible': menuStore.drawerOpen }">
       <div class="drawer-close"><button class="delete is-medium" @click="$emit('toggleBurger')"></button></div>
       <nav class="menu">
         <p class="menu-label">Nos produits</p>
@@ -41,7 +40,7 @@ function lockScroll() {
       </nav>
       <div class="columns mt-4" v-if="!userStore.isUserConnected">
         <div class="column">
-          <RouterLink to="/login" class="button is-primary is-block">Se connecter</RouterLink>
+          <Button label="Se connecter" to="/login" />
         </div>
         <div class="column">
           <RouterLink to="/signup" class="button is-primary is-block">Créer un compte</RouterLink>
