@@ -18,7 +18,7 @@ function toggleBurger() {
 watch(
   () => route.path,
   () => {
-    toggleBurger();
+    menuStore.closeDrawer();
   }
 );
 </script>

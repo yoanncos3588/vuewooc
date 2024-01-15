@@ -58,6 +58,9 @@ export const useMenus = defineStore("menus", {
     toggleDrawer() {
       this.isDrawerOpen = !this.isDrawerOpen;
     },
+    closeDrawer() {
+      this.isDrawerOpen = false;
+    },
   },
   getters: {},
 });
